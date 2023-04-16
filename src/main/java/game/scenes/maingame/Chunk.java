@@ -33,13 +33,19 @@ public abstract class Chunk {
 
         //First, find empty cells
         List<int[]> emptyCells = new ArrayList<>();
-        for (int x = this.chunkX * MainGame.grid.chunkWidth; x < MainGame.grid.chunkWidth; x++) {
-            for (int y = this.chunkY * MainGame.grid.chunkHeight; y < MainGame.grid.chunkHeight; y++) {
+        boolean outputed = false;
+        for (int x = this.chunkX * MainGame.grid.chunkWidth; x < (this.chunkX * MainGame.grid.chunkWidth) + MainGame.grid.chunkWidth; x++) {
+            for (int y = this.chunkY * MainGame.grid.chunkHeight; y < (this.chunkY * MainGame.grid.chunkHeight) + MainGame.grid.chunkHeight; y++) {
+                if (!outputed) {
+                    System.out.println("Check: " + x + "," + y);
+                    outputed = true;
+                }
                 if (!MainGame.checkSolidByGridPos(x, y)) {
                     emptyCells.add(new int[]{x, y});
                 }
             }
         }
+        System.out.println("Found " + emptyCells.size() + " empty cells in chunk: " + this.id);
         //If there are none, set the chunk full boolean to true and return
         if (emptyCells.size() == 0) {
             this.full = true;

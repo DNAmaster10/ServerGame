@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hamlet extends Chunk {
-    public List<Integer> buildings = new ArrayList<>();
-
     public Hamlet(int chunkX, int chunkY) {
         super.id = Ids.getNewId();
         super.neededBuildings = Chunks.hamletChunkBuildings;

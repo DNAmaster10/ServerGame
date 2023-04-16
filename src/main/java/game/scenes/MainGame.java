@@ -23,7 +23,7 @@ public class MainGame {
     public static int packetRemovalInterval = 5;
     //Indicated the last time that packets where removed
     public static int lastPacketRemoval;
-    public static int generateInterval = 5;
+    public static int generateInterval = 1;
     public static int lastGenerate;
     public static HashMap<Integer, Router> routers = new HashMap<>();
     public static HashMap<Integer, Cable> cables = new HashMap<>();
@@ -153,6 +153,10 @@ public class MainGame {
         }
         //Now, select a random border
         int chunkBorder;
+        if (emptyBorders.size() == 0) {
+            emptyBorderChunk.bordersFull = true;
+            return;
+        }
         if (emptyBorders.size() == 1) {
             chunkBorder = emptyBorders.get(0);
         }
@@ -243,7 +247,7 @@ public class MainGame {
         }
         //Draw chunk borders
         for (Chunk chunk : chunks.values()) {
-            Raylib.DrawText(String.valueOf(chunk.id), chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkHeight * grid.cellWindowHeight, 3, WHITE);
+            Raylib.DrawText(String.valueOf(chunk.id) + ", " + chunk.bordersFull, chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkHeight * grid.cellWindowHeight, 3, WHITE);
             Raylib.DrawRectangleLines(chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkWidth * grid.cellWindowHeight, grid.chunkWidth * grid.cellWindowWidth, grid.chunkHeight * grid.cellWindowHeight, BLACK);
         }
         Raylib.DrawRectangle(-2, -2, 4, 4, BLACK);
