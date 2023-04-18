@@ -4,14 +4,19 @@ import com.raylib.Raylib;
 import game.objects.Packet;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
+import game.scenes.maingame.NodeConnection;
 import game.scenes.maingame.NodeGraph;
 import game.scenes.maingame.Packets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Consumer extends Structure {
+    //A hash map containing all shortest paths to all servers on the map. Recalculated upon cable placement
+    HashMap<Integer, List<NodeConnection>> shortestPaths = new HashMap<>();
+
     //A list of integers indicating the destination for the packets
     //which are departing.
     List<Integer> departingPackets = new ArrayList<>();
@@ -24,6 +29,17 @@ public abstract class Consumer extends Structure {
     //An integer used to decide whether or not a building should start emitting
     int packetFrequency;
 
+    public void calculatePaths() {
+        //First clear existing path hash map
+        shortestPaths.clear();
+        for (Integer serverId : Packets.availableServers) {
+            shortestPaths.put(serverId, NodeGraph.findShortestPath(this.id, serverId));
+        }
+    }
+    public List<NodeConnection> getPath(int destServerId) {
+        return(shortestPaths.get(destServerId));
+    }
+
     @Override
     public void tick() {
         if (!super.connectedToHq) {
@@ -32,7 +48,7 @@ public abstract class Consumer extends Structure {
         //If already emitting, check if a packet should be released and release it
         if (emitting) {
             if (Raylib.GetTime() - lastPacketTime > packetsPerSecond) {
-                Packet packet = new Packet(this.id, departingPackets.get(0));
+                Packet packet = new Packet(this.id, departingPackets.get(0), this.getPath(departingPackets.get(0)));
                 departingPackets.remove(0);
                 if (departingPackets.size() == 0) {
                     emitting = false;
@@ -48,7 +64,6 @@ public abstract class Consumer extends Structure {
             int chance = ThreadLocalRandom.current().nextInt(0, 1001);
             if (!(chance > this.packetFrequency)) {
                 //Check if the favourite server is connected to the network
-                System.out.println(favouriteServer);
                 if (MainGame.structures.get(favouriteServer).connectedToHq) {
                     chance = ThreadLocalRandom.current().nextInt(0, 101);
                     if (chance > 50) {

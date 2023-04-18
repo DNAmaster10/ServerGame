@@ -6,8 +6,13 @@ import game.objects.Packet;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
+import game.scenes.maingame.NodeConnection;
+import game.scenes.maingame.NodeGraph;
+import game.scenes.maingame.Packets;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +22,19 @@ public class Server extends Structure {
     public int windowXPos;
     public int windowYPos;
     public Raylib.Color color = new Jaylib.Color(255, 157, 0, 255);
+    public HashMap<Integer, List<NodeConnection>> shortestPaths = new HashMap<>();
+
+    public void calculatePaths() {
+        //First clear existing path hash map
+        shortestPaths.clear();
+        for (Integer consumerId : Packets.availableConsumers) {
+            shortestPaths.put(consumerId, NodeGraph.findShortestPath(this.id, consumerId));
+        }
+    }
+
+    public List<NodeConnection> getPath(int destConsumerId) {
+        return(shortestPaths.get(destConsumerId));
+    }
 
     @Override
     public void draw() {

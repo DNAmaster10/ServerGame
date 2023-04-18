@@ -46,7 +46,7 @@ public class Packet {
         Raylib.DrawCircle((int) windowPositionX, (int) windowPositionY, 2, color);
     }
 
-    public Packet(int source, int dest) {
+    public Packet(int source, int dest, List<NodeConnection> path) {
         this.source = source;
         this.destination = dest;
 

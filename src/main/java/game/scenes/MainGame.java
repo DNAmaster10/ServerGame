@@ -23,7 +23,7 @@ public class MainGame {
     public static int packetRemovalInterval = 5;
     //Indicated the last time that packets where removed
     public static int lastPacketRemoval;
-    public static int generateInterval = 1;
+    public static int generateInterval = 5;
     public static int lastGenerate;
     public static HashMap<Integer, Router> routers = new HashMap<>();
     public static HashMap<Integer, Cable> cables = new HashMap<>();
@@ -246,10 +246,10 @@ public class MainGame {
             packet.draw();
         }
         //Draw chunk borders
-        for (Chunk chunk : chunks.values()) {
-            Raylib.DrawText(String.valueOf(chunk.id) + ", " + chunk.bordersFull, chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkHeight * grid.cellWindowHeight, 3, WHITE);
-            Raylib.DrawRectangleLines(chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkWidth * grid.cellWindowHeight, grid.chunkWidth * grid.cellWindowWidth, grid.chunkHeight * grid.cellWindowHeight, BLACK);
-        }
+        //for (Chunk chunk : chunks.values()) {
+        //    Raylib.DrawText(String.valueOf(chunk.id) + ", " + chunk.bordersFull, chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkHeight * grid.cellWindowHeight, 3, WHITE);
+        //    Raylib.DrawRectangleLines(chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkWidth * grid.cellWindowHeight, grid.chunkWidth * grid.cellWindowWidth, grid.chunkHeight * grid.cellWindowHeight, BLACK);
+        //}
         Raylib.DrawRectangle(-2, -2, 4, 4, BLACK);
         Raylib.EndMode2D();
         Raylib.DrawText("Total structures: " + (routers.size() + cables.size()), 10, 10, 10, BLACK);

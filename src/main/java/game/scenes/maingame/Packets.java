@@ -10,6 +10,7 @@ import java.util.List;
 public class Packets {
     //Calculated on edge creation
     public static List<Integer> availableServers = new ArrayList<>();
+    public static List<Integer> availableConsumers = new ArrayList<>();
     public static void tickPackets() {
         //Create packets where needed
         for (Structure structure : MainGame.structures.values()) {

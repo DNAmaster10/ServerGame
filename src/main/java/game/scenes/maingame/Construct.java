@@ -1,6 +1,7 @@
 package game.scenes.maingame;
 
 import game.objects.Packet;
+import game.objects.buildings.Consumer;
 import game.objects.buildings.Server;
 import game.objects.infrastructure.Cable;
 import game.objects.infrastructure.Router;
@@ -45,14 +46,28 @@ public class Construct {
             building.connectedToHq = NodeGraph.checkHqConnection(building.id);
         }
 
-        //Set available servers in packets
+        //Set available servers & consumers in packets
         Packets.availableServers.clear();
+        Packets.availableConsumers.clear();
         for (Structure building : MainGame.buildings.values()) {
-            if (building instanceof Server) {
-                if (building.connectedToHq) {
+            if (building.connectedToHq) {
+                if (building instanceof Server) {
                     Packets.availableServers.add(building.id);
                 }
+                else if (building instanceof Consumer) {
+                    Packets.availableConsumers.add(building.id);
+                }
             }
+        }
+
+        //Now calculate all the cached paths for consumers & servers
+        for (Consumer consumer : MainGame.consumers.values()) {
+            if (consumer.connectedToHq) {
+                consumer.calculatePaths();
+            }
+        }
+        for (Integer structureId : Packets.availableServers) {
+            Server server = MainGame.getStructureById(structureId);
         }
     }
 }
