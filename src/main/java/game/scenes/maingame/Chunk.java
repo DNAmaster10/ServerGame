@@ -99,6 +99,7 @@ public abstract class Chunk {
                 Server server = new Server(emptyCells.get(emptySpotIndex)[0], emptyCells.get(emptySpotIndex)[1]);
                 MainGame.buildings.put(server.id, server);
                 MainGame.structures.put(server.id, server);
+                MainGame.servers.put(server.id, server);
                 this.buildings.add(server);
             }
         }
@@ -178,6 +179,7 @@ public abstract class Chunk {
                     Server server = new Server(emptyCells.get(emptySpotIndex)[0], emptyCells.get(emptySpotIndex)[1]);
                     MainGame.buildings.put(server.id, server);
                     MainGame.structures.put(server.id, server);
+                    MainGame.servers.put(server.id, server);
                     this.buildings.add(server);
                 }
             }

@@ -66,8 +66,13 @@ public class Construct {
                 consumer.calculatePaths();
             }
         }
-        for (Integer structureId : Packets.availableServers) {
-            Server server = MainGame.getStructureById(structureId);
+        System.out.println("Total servers: " + MainGame.servers.size());
+        for (Server server : MainGame.servers.values()) {
+            System.out.println("Calculating...");
+            if (server.connectedToHq) {
+                System.out.println("Calculating server paths");
+                server.calculatePaths();
+            }
         }
     }
 }

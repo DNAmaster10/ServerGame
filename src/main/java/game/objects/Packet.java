@@ -2,12 +2,14 @@ package game.objects;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
+import game.objects.buildings.Server;
 import game.objects.infrastructure.Cable;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.NodeConnection;
 import game.scenes.maingame.NodeGraph;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Packet {
@@ -25,11 +27,12 @@ public class Packet {
     //Indicates whether the packet has finished in journey. Used for removal later.
     public boolean hasArrived = false;
 
-    public void reverse() {
+    public void reverse(Server server) {
         int temp = this.source;
         this.source = destination;
+        System.out.println("Paths total: " + server.shortestPaths.size());
         this.destination = temp;
-        this.path = NodeGraph.findShortestPath(source, destination);
+        this.path =  new ArrayList<>(server.getPath(this.destination));
         this.path.remove(0);
     }
 
@@ -50,19 +53,20 @@ public class Packet {
         this.source = source;
         this.destination = dest;
 
-        this.path = NodeGraph.findShortestPath(source, dest);
-
-        MainGame.packets.add(this);
+        this.path = new ArrayList<>(path);
 
         int currentGridX = MainGame.getStructureById(source).gridX;
         int currentGridY = MainGame.getStructureById(source).gridY;
         this.windowPositionX = currentGridX * MainGame.grid.cellWindowWidth;
         this.windowPositionY = currentGridY * MainGame.grid.cellWindowHeight;
 
-        path.remove(0);
+        this.path.remove(0);
 
-        this.currentCable = MainGame.getCableByStructureIds(source, path.get(0).getDestNode());
+
+        this.currentCable = MainGame.getCableByStructureIds(source, this.path.get(0).getDestNode());
         this.currentTime = 0f;
-        this.currentDeltas = this.currentCable.getDeltas(source, path.get(0).getDestNode());
+        this.currentDeltas = this.currentCable.getDeltas(source, this.path.get(0).getDestNode());
+
+        MainGame.packets.add(this);
     }
 }

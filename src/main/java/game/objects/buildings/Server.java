@@ -51,7 +51,7 @@ public class Server extends Structure {
                     arrivingPacket.tick();
                 }
                 else {
-                    arrivingPacket.reverse();
+                    arrivingPacket.reverse(this);
                     arrivingPacket.windowPositionX = this.windowXPos + 5;
                     arrivingPacket.windowPositionY = this.windowYPos + 5;
                     arrivingPacket.currentDeltas = arrivingPacket.currentCable.getDeltas(this.id, arrivingPacket.path.get(0).getDestNode());

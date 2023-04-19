@@ -4,6 +4,7 @@ import com.raylib.Raylib;
 import game.objects.Packet;
 import game.objects.Player;
 import game.objects.buildings.Consumer;
+import game.objects.buildings.Server;
 import game.objects.infrastructure.Cable;
 import game.objects.infrastructure.Router;
 import game.objects.infrastructure.Structure;
@@ -29,6 +30,7 @@ public class MainGame {
     public static HashMap<Integer, Cable> cables = new HashMap<>();
     public static HashMap<String, Cable> cablesIdMap = new HashMap<>();
     public static HashMap<Integer, Consumer> consumers = new HashMap<>();
+    public static HashMap<Integer, Server> servers = new HashMap<>();
     public static HashMap<Integer, Structure> buildings = new HashMap<>();
     public static HashMap<Integer, Chunk> chunks = new HashMap<>();
     public static HashMap<Integer, Structure> structures = new HashMap<>();
@@ -86,6 +88,12 @@ public class MainGame {
         }
         System.out.println(cablesIdMap.keySet());
         System.out.println(sourceStructureId + " : " + destStructureId);
+        return null;
+    }
+    public static Server getServerById(int id) {
+        if (servers.containsKey(id)) {
+            return(servers.get(id));
+        }
         return null;
     }
 

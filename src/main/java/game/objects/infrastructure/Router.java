@@ -58,6 +58,9 @@ public class Router extends Structure {
                     //System.out.println("Id - " + super.id);
                     //System.out.println("Id2 - " + packet.path.get(0));
                     packet.currentCable = MainGame.getCableByStructureIds(super.id, packet.path.get(0).getDestNode());
+                    if (packet.currentCable == null) {
+                        System.out.println("NULL HERE!");
+                    }
                     packet.currentDeltas = packet.currentCable.getDeltas(super.id, packet.path.get(0).getDestNode());
                     MainGame.getStructureById(packet.path.get(0).getDestNode()).arrivingPackets.add(packet);
                 }
