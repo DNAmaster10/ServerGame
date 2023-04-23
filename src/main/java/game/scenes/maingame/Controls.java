@@ -67,13 +67,11 @@ public class Controls {
                         //If they click on another structure, check building stuff
                         if (!(secondStructure instanceof Router)) {
                             if (NodeGraph.checkNode(secondStructure.id)) {
-                                System.out.println("Connection already made");
                                 Player.placingCable = false;
                                 Player.firstStructure = -1;
                             }
                         }
                         int secondStructureId = secondStructure.id;
-                        System.out.println("Creating cable: " + Player.firstStructure + " " + secondStructureId);
                         Construct.placeCable(Player.properties.currentStructureLevel, Player.firstStructure, secondStructureId);
                         Player.firstStructure = -1;
                         Player.placingCable = false;
@@ -87,7 +85,6 @@ public class Controls {
                         }
                         if (!(firstStructure instanceof Router)) {
                             if (NodeGraph.checkNode(firstStructure.id)) {
-                                System.out.println("Connection already made");
                                 return;
                             }
                         }

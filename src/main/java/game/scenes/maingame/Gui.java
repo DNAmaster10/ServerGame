@@ -32,12 +32,12 @@ public class Gui {
     public static void init() {
         height = Window.properties.windowHeight;
 
-        toggleRouterSelection = new Button(Window.properties.windowWidth - width, 0, width / 2, 10, 1, WHITE, BLACK, "Routers", 2, BLACK);
-        toggleEdgeSelection = new Button((Window.properties.windowWidth - width) + width / 2, 0, width / 2, 10, 1, WHITE, BLACK, "Cables", 2, BLACK);
+        toggleRouterSelection = new Button(Window.properties.windowWidth - width, 0, width / 2, 15, 1, WHITE, BLACK, "Routers", 2, BLACK);
+        toggleEdgeSelection = new Button((Window.properties.windowWidth - width) + width / 2, 0, width / 2, 15, 1, WHITE, BLACK, "Cables", 2, BLACK);
 
         //Button details
         int buttonWidth = 90;
-        int buttonHeight = 10;
+        int buttonHeight = 15;
         int buttonFontSize = 5;
 
         //Define the amount of routers and edges in the game
@@ -66,10 +66,10 @@ public class Gui {
 
 
         for (int i = 0; i < routerButtons.length; i++) {
-            routerButtons[i] = new Button(Window.properties.windowWidth - width + ((width - buttonWidth) / 2), i * (buttonHeight + 2) + 10, buttonWidth, buttonHeight, 1, WHITE, BLACK, routerNames[i], buttonFontSize, BLACK);
+            routerButtons[i] = new Button(Window.properties.windowWidth - width + ((width - buttonWidth) / 2), i * (buttonHeight + 2) + 17, buttonWidth, buttonHeight, 1, WHITE, BLACK, routerNames[i], buttonFontSize, BLACK);
         }
         for (int i = 0; i < edgeNames.length; i++) {
-            edgeButtons[i] = new Button(Window.properties.windowWidth - width + ((width - buttonWidth) / 2), i * (buttonHeight + 2) + 10, buttonWidth, buttonHeight, 1, WHITE, BLACK, edgeNames[i], buttonFontSize, BLACK);
+            edgeButtons[i] = new Button(Window.properties.windowWidth - width + ((width - buttonWidth) / 2), i * (buttonHeight + 2) + 17, buttonWidth, buttonHeight, 1, WHITE, BLACK, edgeNames[i], buttonFontSize, BLACK);
         }
     }
     public static void draw() {

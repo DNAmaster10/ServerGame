@@ -3,6 +3,8 @@ package game.objects.infrastructure;
 import com.raylib.Jaylib;
 
 public class SmallRouter {
-    public static int packetsPerSecond = 1;
+    //The time taken between packet releases.
+    //The smaller the number, the more packers per second can be handles
+    public static int packetHandleDelay = 1;
     public static int maxCacheSize = 5;
 }

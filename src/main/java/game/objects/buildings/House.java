@@ -24,7 +24,6 @@ public class House extends Consumer {
             Raylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
         }
     }
-
     public House(int gridX, int gridY) {
         super.id = Ids.getNewId();
         super.gridX = gridX;
@@ -35,14 +34,12 @@ public class House extends Consumer {
 
         windowXPos = gridX * MainGame.grid.cellWindowWidth - 5;
         windowYPos = gridY * MainGame.grid.cellWindowHeight - 5;
-        super.packetsPerSecond = 1;
+        super.packetEmitDelay = 1f;
         super.packetFrequency = 1;
 
         List<Integer> serverIds = new ArrayList<>();
-        for (Structure structure : MainGame.structures.values()) {
-            if (structure instanceof Server) {
-                serverIds.add(structure.id);
-            }
+        for (Server server : MainGame.servers.values()) {
+            serverIds.add(server.id);
         }
         this.favouriteServer = serverIds.get(ThreadLocalRandom.current().nextInt(0, serverIds.size()));
     }

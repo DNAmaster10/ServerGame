@@ -5,13 +5,15 @@ import game.objects.Packet;
 import game.objects.Player;
 import game.objects.buildings.Consumer;
 import game.objects.buildings.Server;
+import game.objects.chunks.ServerPark;
 import game.objects.infrastructure.Cable;
 import game.objects.infrastructure.Router;
 import game.objects.infrastructure.Structure;
 import game.scenes.maingame.*;
-import game.scenes.maingame.chunks.Hamlet;
+import game.objects.chunks.Hamlet;
 import game.scenes.maingame.chunks.InitChunks;
-import game.scenes.maingame.chunks.SpawnChunk;
+import game.objects.chunks.SmallOfficePark;
+import game.objects.chunks.SpawnChunk;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,7 +26,7 @@ public class MainGame {
     public static int packetRemovalInterval = 5;
     //Indicated the last time that packets where removed
     public static int lastPacketRemoval;
-    public static int generateInterval = 5;
+    public static int generateInterval = 1;
     public static int lastGenerate;
     public static HashMap<Integer, Router> routers = new HashMap<>();
     public static HashMap<Integer, Cable> cables = new HashMap<>();
@@ -86,8 +88,6 @@ public class MainGame {
         if (cablesIdMap.containsKey(key)) {
             return(cablesIdMap.get(key));
         }
-        System.out.println(cablesIdMap.keySet());
-        System.out.println(sourceStructureId + " : " + destStructureId);
         return null;
     }
     public static Server getServerById(int id) {
@@ -114,7 +114,6 @@ public class MainGame {
                 notFullChunks.add(chunk);
             }
         }
-        System.out.println("Found " + notFullChunks.size() + " not full chunks");
         if (notFullChunks.size() > 0) {
             int selectedChunk;
             //Out of the chunks which are not full, pick a random one, or the only one
@@ -193,13 +192,21 @@ public class MainGame {
         }
         //Now, generate the chunk in the position
         int randomChunk;
+        randomChunk = ThreadLocalRandom.current().nextInt(1, 4);
         //INSERT CODE TO GEN RANDOM CHUNK HERE
-        randomChunk = 1;
 
         switch(randomChunk) {
             case 1 -> {
                 Hamlet hamlet = new Hamlet(chunkPosition[0], chunkPosition[1]);
                 chunks.put(hamlet.id, hamlet);
+            }
+            case 2 -> {
+                SmallOfficePark officePark = new SmallOfficePark(chunkPosition[0], chunkPosition[1]);
+                chunks.put(officePark.id, officePark);
+            }
+            case 3 -> {
+                ServerPark serverPark = new ServerPark(chunkPosition[0], chunkPosition[1]);
+                chunks.put(serverPark.id, serverPark);
             }
         }
         //If the border chunk's borders are now full, change that
@@ -232,7 +239,7 @@ public class MainGame {
     }
 
     public static void draw() {
-        ClearBackground(RED);
+        ClearBackground(WHITE);
         Raylib.BeginMode2D(Player.camera);
         for (Cable value : cables.values()) {
             value.draw();
@@ -247,7 +254,7 @@ public class MainGame {
         if (Player.placingCable) {
             Structure startStructure = MainGame.getStructureById(Player.firstStructure);
             assert startStructure != null;
-            Raylib.DrawLine(startStructure.gridX * grid.cellWindowWidth, startStructure.gridY * grid.cellWindowHeight, (int) GetScreenToWorld2D(GetMousePosition(), Player.camera).x(), (int) GetScreenToWorld2D(GetMousePosition(), Player.camera).y(), WHITE);
+            Raylib.DrawLine(startStructure.gridX * grid.cellWindowWidth, startStructure.gridY * grid.cellWindowHeight, (int) GetScreenToWorld2D(GetMousePosition(), Player.camera).x(), (int) GetScreenToWorld2D(GetMousePosition(), Player.camera).y(), BLACK);
         }
         //Draw packets
         for (Packet packet : MainGame.packets) {
@@ -260,6 +267,9 @@ public class MainGame {
         //}
         Raylib.DrawRectangle(-2, -2, 4, 4, BLACK);
         Raylib.EndMode2D();
+        //Draw money and packet details
+        Raylib.DrawText("Delivered Packets: " + Player.deliveredPackets, 120, 10, 10, BLACK);
+        Raylib.DrawText("Lost Packets: " + Player.lostPackets, 240, 10, 10, BLACK);
         Raylib.DrawText("Total structures: " + (routers.size() + cables.size()), 10, 10, 10, BLACK);
         Gui.draw();
     }

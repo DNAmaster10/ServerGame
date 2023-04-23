@@ -1,7 +1,8 @@
-package game.scenes.maingame.chunks;
+package game.objects.chunks;
 
 import game.scenes.maingame.Chunk;
 import game.scenes.maingame.Ids;
+import game.scenes.maingame.chunks.Chunks;
 
 import java.util.ArrayList;
 import java.util.List;

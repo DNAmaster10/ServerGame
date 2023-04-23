@@ -13,8 +13,6 @@ public abstract class Structure {
 
     public List<Packet> arrivingPackets = new ArrayList<>();
 
-    public int packetsPerSecond;
-
     //Type indicated the structure type.
     //0 is router
     //1 is cable

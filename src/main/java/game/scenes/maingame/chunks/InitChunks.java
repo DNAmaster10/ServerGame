@@ -8,5 +8,12 @@ public class InitChunks {
 
         Chunks.hamletChunkBuildings[0] = 1;
         Chunks.hamletChunkBuildings[1] = 1;
+
+        Chunks.smallOfficeParkBuildings[0] = 3;
+        Chunks.smallOfficeParkBuildings[1] = 3;
+        Chunks.smallOfficeParkBuildings[2] = 3;
+
+        Chunks.serverParkBuildings[0] = 8;
+        Chunks.serverParkBuildings[1] = 8;
     }
 }

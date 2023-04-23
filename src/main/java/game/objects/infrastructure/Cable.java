@@ -95,7 +95,7 @@ public class Cable {
         startPos.x(windowXPosStart);
         startPos.y(windowYPosStart);
         endPos.x(windowXPosEnd);
-        endPos.y(windowXPosEnd);
+        endPos.y(windowYPosEnd);
 
         this.sourceStructureId = sourceStructureId;
         this.destStructureId = destStructureId;

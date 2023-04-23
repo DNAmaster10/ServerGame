@@ -2,6 +2,7 @@ package game.objects.buildings;
 
 import com.raylib.Raylib;
 import game.objects.Packet;
+import game.objects.Player;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.NodeConnection;
@@ -25,7 +26,7 @@ public abstract class Consumer extends Structure {
     boolean emitting = false;
     int minPackets;
     int maxPackets;
-    int packetsPerSecond;
+    float packetEmitDelay;
     //An integer used to decide whether or not a building should start emitting
     int packetFrequency;
 
@@ -47,7 +48,7 @@ public abstract class Consumer extends Structure {
         }
         //If already emitting, check if a packet should be released and release it
         if (emitting) {
-            if (Raylib.GetTime() - lastPacketTime > packetsPerSecond) {
+            if (Raylib.GetTime() - lastPacketTime > packetEmitDelay) {
                 Packet packet = new Packet(this.id, departingPackets.get(0), this.getPath(departingPackets.get(0)));
                 departingPackets.remove(0);
                 if (departingPackets.size() == 0) {
@@ -78,7 +79,6 @@ public abstract class Consumer extends Structure {
                 if (!Packets.availableServers.isEmpty() && !emitting) {
 
                     int server = Packets.availableServers.get(ThreadLocalRandom.current().nextInt(0, Packets.availableServers.size()));
-                    System.out.println(server);
                     int packetCount = ThreadLocalRandom.current().nextInt(this.minPackets, this.maxPackets + 1);
                     for (int i = 0; i < packetCount; i++) {
                         this.departingPackets.add(Packets.availableServers.get(0));
@@ -97,6 +97,7 @@ public abstract class Consumer extends Structure {
                 else {
                     arrivingPackets.get(i).moving = false;
                     arrivingPackets.get(i).hasArrived = true;
+                    Player.deliveredPackets++;
                     arrivingPackets.remove(i);
                     i--;
                 }

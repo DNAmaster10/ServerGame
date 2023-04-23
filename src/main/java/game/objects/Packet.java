@@ -43,7 +43,9 @@ public class Packet {
     }
 
     public void draw() {
-        Raylib.DrawCircleV(this.windowPosition, 2, color);
+        if (this.moving) {
+            Raylib.DrawCircleV(this.windowPosition, 2, color);
+        }
     }
 
     public Packet(int source, int dest, List<NodeConnection> path) {

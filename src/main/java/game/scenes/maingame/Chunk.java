@@ -3,6 +3,7 @@ package game.scenes.maingame;
 import game.objects.buildings.Headquarters;
 import game.objects.buildings.House;
 import game.objects.buildings.Server;
+import game.objects.buildings.SmallOffice;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 
@@ -24,7 +25,6 @@ public abstract class Chunk {
     public int[] neededBuildings;
 
     public void generateOne() {
-        System.out.println("This chunk " + this.id + ": " + this.chunkX * MainGame.grid.chunkWidth + "," + this.chunkY * MainGame.grid.chunkHeight);
         //First, check if buildings are actually needed
         if (this.buildings.size() == this.neededBuildings.length) {
             this.full = true;
@@ -37,7 +37,6 @@ public abstract class Chunk {
         for (int x = this.chunkX * MainGame.grid.chunkWidth; x < (this.chunkX * MainGame.grid.chunkWidth) + MainGame.grid.chunkWidth; x++) {
             for (int y = this.chunkY * MainGame.grid.chunkHeight; y < (this.chunkY * MainGame.grid.chunkHeight) + MainGame.grid.chunkHeight; y++) {
                 if (!outputed) {
-                    System.out.println("Check: " + x + "," + y);
                     outputed = true;
                 }
                 if (!MainGame.checkSolidByGridPos(x, y)) {
@@ -45,7 +44,6 @@ public abstract class Chunk {
                 }
             }
         }
-        System.out.println("Found " + emptyCells.size() + " empty cells in chunk: " + this.id);
         //If there are none, set the chunk full boolean to true and return
         if (emptyCells.size() == 0) {
             this.full = true;
@@ -106,10 +104,8 @@ public abstract class Chunk {
         if (buildings.size() == neededBuildings.length) {
             this.full = true;
         }
-        System.out.println("Creating building at " + emptyCells.get(emptySpotIndex)[0] + "," + emptyCells.get(emptySpotIndex)[1]);
     }
     public void generateFull() {
-        System.out.println("Generating chunk: " + id);
         //First, find empty cells
         List<int[]> emptyCells = new ArrayList<>();
         for (int x = this.chunkX * MainGame.grid.chunkWidth; x < MainGame.grid.chunkWidth; x++) {
@@ -119,7 +115,6 @@ public abstract class Chunk {
                 }
             }
         }
-        System.out.println("Found " + emptyCells.size() + " empty cells in chunk");
         //If there are none, set the chunk full boolean to true and return
         if (emptyCells.size() == 0) {
             this.full = true;
@@ -161,7 +156,11 @@ public abstract class Chunk {
                     //Apartment
                 }
                 case 3 -> {
-                    //Small Office
+                    SmallOffice office = new SmallOffice(emptyCells.get(emptySpotIndex)[0], emptyCells.get(emptySpotIndex)[1]);
+                    MainGame.buildings.put(office.id, office);
+                    MainGame.structures.put(office.id, office);
+                    MainGame.consumers.put(office.id, office);
+                    this.buildings.add(office);
                 }
                 case 4 -> {
                     //Large Office
