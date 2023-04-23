@@ -3,6 +3,7 @@ package game.objects.infrastructure;
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
 import game.objects.Packet;
+import game.objects.Player;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 
@@ -24,9 +25,10 @@ public class Router extends Structure {
 
     @Override
     public void draw() {
-
         Jaylib.DrawCircle(windowXPos, windowYPos, 3, Jaylib.WHITE);
-        Jaylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
+        if (Player.drawIds) {
+            Jaylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
+        }
     }
 
     @Override
@@ -47,8 +49,8 @@ public class Router extends Structure {
         if (!storedPackets.isEmpty()) {
             if (Raylib.GetTime() - lastPacketRelease > packetsPerSecond) {
                 Packet packet = storedPackets.get(0);
-                packet.windowPositionX = this.windowXPos;
-                packet.windowPositionY = this.windowYPos;
+                packet.windowPosition.x(this.windowXPos);
+                packet.windowPosition.y(this.windowYPos);
                 if (packet.path.size() == 0) {
                     packet.currentCable = MainGame.getCableByStructureIds(super.id, packet.destination);
                     packet.currentDeltas = packet.currentCable.getDeltas(super.id, packet.destination);
@@ -86,6 +88,7 @@ public class Router extends Structure {
         super.id = Ids.getNewId();
         super.gridX = gridX;
         super.gridY = gridY;
+        this.connectedToHq = false;
         windowXPos = gridX * MainGame.grid.cellWindowWidth;
         windowYPos = gridY * MainGame.grid.cellWindowHeight;
 

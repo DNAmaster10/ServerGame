@@ -7,13 +7,13 @@ public class NodeConnection {
     private int destNode;
 
     //The weight of this edge
-    private int weight;
+    private float weight;
 
     public int getDestNode() {
         return(destNode);
     }
 
-    public int getWeight() {
+    public float getWeight() {
         return (weight);
     }
 
@@ -21,11 +21,11 @@ public class NodeConnection {
         destNode = destinationNode;
     }
 
-    public void setWeight(int newWeight) {
+    public void setWeight(float newWeight) {
         weight = newWeight;
     }
 
-    public NodeConnection(int destinationNode, int edgeWeight) {
+    public NodeConnection(int destinationNode, float edgeWeight) {
         destNode = destinationNode;
         weight = edgeWeight;
     }

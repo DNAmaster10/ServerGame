@@ -74,17 +74,17 @@ public abstract class Consumer extends Structure {
                         emitting = true;
                     }
                 }
-            }
-            //Get a random server
-            if (!Packets.availableServers.isEmpty() && !emitting) {
+                //Get a random server
+                if (!Packets.availableServers.isEmpty() && !emitting) {
 
-                int server = Packets.availableServers.get(ThreadLocalRandom.current().nextInt(0, Packets.availableServers.size()));
-                System.out.println(server);
-                int packetCount = ThreadLocalRandom.current().nextInt(this.minPackets, this.maxPackets + 1);
-                for (int i = 0; i < packetCount; i++) {
-                    this.departingPackets.add(Packets.availableServers.get(0));
+                    int server = Packets.availableServers.get(ThreadLocalRandom.current().nextInt(0, Packets.availableServers.size()));
+                    System.out.println(server);
+                    int packetCount = ThreadLocalRandom.current().nextInt(this.minPackets, this.maxPackets + 1);
+                    for (int i = 0; i < packetCount; i++) {
+                        this.departingPackets.add(Packets.availableServers.get(0));
+                    }
+                    emitting = true;
                 }
-                emitting = true;
             }
         }
 

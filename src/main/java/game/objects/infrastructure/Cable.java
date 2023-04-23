@@ -1,5 +1,6 @@
 package game.objects.infrastructure;
 
+import com.raylib.Raylib;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 import game.scenes.maingame.NodeGraph;
@@ -8,20 +9,23 @@ import java.io.IOError;
 
 import static com.raylib.Jaylib.BLACK;
 import static com.raylib.Raylib.DrawLine;
+import static com.raylib.Raylib.DrawLineEx;
 import static java.lang.Math.sqrt;
 
 public class Cable {
     public int id;
     //The ammount of time in seconds it takes for a packet to travel from one end to the other
-    public int travelTime;
+    public float travelTime;
     //The length of the cable in grid length
-    public int gridLength;
+    public float gridLength;
     public int windowLength;
     public int reliability;
     public int windowXPosStart;
     public int windowYPosStart;
     public int windowXPosEnd;
     public int windowYPosEnd;
+    public Raylib.Vector2 startPos = new Raylib.Vector2();
+    public Raylib.Vector2 endPos = new Raylib.Vector2();
     public int sourceStructureId;
     public int destStructureId;
     //These are the numbers to add to x and y for packets each step
@@ -48,7 +52,8 @@ public class Cable {
     }
 
     public void draw() {
-        DrawLine(windowXPosStart, windowYPosStart, windowXPosEnd, windowYPosEnd, BLACK);
+
+        DrawLineEx(startPos, endPos, 1, BLACK);
     }
 
     public void upgrade(int level) {
@@ -56,7 +61,7 @@ public class Cable {
             case 1: {
                 travelTime = gridLength / CopperCable.speed;
                 if (gridLength > CopperCable.maxLength) {
-                    reliability = CopperCable.maxReliability - ((CopperCable.maxLength - gridLength) * CopperCable.reliablityDrop);
+                    reliability = (int) (CopperCable.maxReliability - ((CopperCable.maxLength - gridLength) * CopperCable.reliablityDrop));
                     if (reliability < CopperCable.minReliablity) {
                         reliability = CopperCable.minReliablity;
                     }
@@ -87,12 +92,17 @@ public class Cable {
         windowXPosEnd = destStructure.gridX * MainGame.grid.cellWindowWidth;
         windowYPosEnd = destStructure.gridY * MainGame.grid.cellWindowHeight;
 
+        startPos.x(windowXPosStart);
+        startPos.y(windowYPosStart);
+        endPos.x(windowXPosEnd);
+        endPos.y(windowXPosEnd);
+
         this.sourceStructureId = sourceStructureId;
         this.destStructureId = destStructureId;
 
         float deltaX = sourceStructure.gridX - destStructure.gridX;
         float deltaY = sourceStructure.gridY - destStructure.gridY;
-        gridLength = (int) sqrt((deltaX * deltaX) + (deltaY * deltaY));
+        gridLength = (float) sqrt((deltaX * deltaX) + (deltaY * deltaY));
 
         deltaX = windowXPosStart - windowXPosEnd;
         deltaY = windowYPosStart - windowYPosEnd;
@@ -102,7 +112,7 @@ public class Cable {
             case 1 -> {
                 travelTime = gridLength / CopperCable.speed;
                 if (gridLength > CopperCable.maxLength) {
-                    reliability = CopperCable.maxReliability - ((CopperCable.maxLength - gridLength) * CopperCable.reliablityDrop);
+                    reliability = (int) (CopperCable.maxReliability - ((CopperCable.maxLength - gridLength) * CopperCable.reliablityDrop));
                     if (reliability < CopperCable.minReliablity) {
                         reliability = CopperCable.minReliablity;
                     }

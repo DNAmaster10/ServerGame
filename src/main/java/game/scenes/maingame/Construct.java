@@ -45,6 +45,10 @@ public class Construct {
         for (Structure building : MainGame.buildings.values()) {
             building.connectedToHq = NodeGraph.checkHqConnection(building.id);
         }
+        //Now recalculate whether a router is connected to the HQ
+        for (Router router : MainGame.routers.values()) {
+            router.connectedToHq = NodeGraph.checkHqConnection(router.id);
+        }
 
         //Set available servers & consumers in packets
         Packets.availableServers.clear();

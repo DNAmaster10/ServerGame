@@ -1,5 +1,8 @@
 package game.scenes.maingame;
 
+import game.objects.buildings.Consumer;
+import game.objects.buildings.Server;
+import game.objects.infrastructure.Router;
 import game.scenes.MainGame;
 
 import java.util.*;
@@ -12,7 +15,7 @@ public class NodeGraph {
 
     public static HashMap<Integer, List<NodeConnection>> connections = new HashMap<>();
 
-    public static void addConnection(int sourceNodeId, int destNodeId, int weight) {
+    public static void addConnection(int sourceNodeId, int destNodeId, float weight) {
         boolean containsEdge = false;
         if (connections.containsKey(sourceNodeId)) {
             for (int i = 0; i < connections.get(sourceNodeId).size(); i++) {
@@ -145,46 +148,103 @@ public class NodeGraph {
     }
 
     public static List<NodeConnection> findShortestPath(int startNode, int endNode) {
-        // Initialize a priority queue and a map to keep track of distances to nodes
-        PriorityQueue<NodeConnection> pq = new PriorityQueue<>(Comparator.comparingInt(NodeConnection::getWeight));
-        Map<Integer, Integer> distances = new HashMap<>();
-
-        // Add the start node to the queue and set its distance to zero
-        pq.offer(new NodeConnection(startNode, 0));
-        distances.put(startNode, 0);
-
-        // Loop until the queue is empty or we have found the shortest path to the end node
-        while (!pq.isEmpty()) {
-            // Get the node with the smallest distance from the start node
-            NodeConnection current = pq.poll();
-
-            // If we have found the shortest path to the end node, return the path
-            if (current.getDestNode() == endNode) {
-                List<NodeConnection> path = new ArrayList<>();
-                int node = endNode;
-                while (node != startNode) {
-                    for (NodeConnection conn : connections.get(node)) {
-                        if (distances.get(node) - conn.getWeight() == distances.get(conn.getDestNode())) {
-                            path.add(0, conn);
-                            node = conn.getDestNode();
-                            break;
-                        }
-                    }
-                }
-                return path;
+        //The following hash map uses node id's as keys.
+        //Each value is an array of integers, 2 in length.
+        //Position 0 is the total distance from the start node.
+        //Position 1 is the previous node the given node connects to
+        //on the shortest path to the start node.
+        HashMap<Integer, DijkstraPath> pathMap = new HashMap<>();
+        List<Integer> unvisited = new ArrayList<>();
+        //Get all consumers who are connected to the HQ
+        for (Consumer consumer : MainGame.consumers.values()) {
+            if (consumer.connectedToHq) {
+                pathMap.put(consumer.id, new DijkstraPath());
+                unvisited.add(consumer.id);
             }
+        }
+        //Get all servers who are connected to the HQ
+        for (Server server : MainGame.servers.values()) {
+            if (server.connectedToHq) {
+                pathMap.put(server.id, new DijkstraPath());
+                unvisited.add(server.id);
+            }
+        }
+        //Get all routers
+        for (Router router : MainGame.routers.values()) {
+            if (router.connectedToHq) {
+                pathMap.put(router.id, new DijkstraPath());
+                unvisited.add(router.id);
+            }
+        }
+        //Lastly, get the HQ
+        pathMap.put(MainGame.HQId, new DijkstraPath());
+        unvisited.add(MainGame.HQId);
 
-            // Loop through the node's outgoing edges and update their distances if necessary
-            for (NodeConnection conn : connections.get(current.getDestNode())) {
-                int newDistance = distances.get(current.getDestNode()) + conn.getWeight();
-                if (!distances.containsKey(conn.getDestNode()) || newDistance < distances.get(conn.getDestNode())) {
-                    distances.put(conn.getDestNode(), newDistance);
-                    pq.offer(new NodeConnection(conn.getDestNode(), newDistance));
+        //Now we have a hash map filled with all the id's which are connected to the HQ
+        //Set the source distance
+        if (!pathMap.containsKey(startNode)) {
+            System.out.println("Error: Start node not found");
+            return(null);
+        }
+        if (!pathMap.containsKey(endNode)) {
+            System.out.println("Error: Dest node not found");
+            return(null);
+        }
+        //Set start node distance to 0, since we are starting here
+        pathMap.get(startNode).weight = 0f;
+
+        //Now, we start the main loop
+        Integer currentNode = 0;
+        //Iterate until all nodes have been visited
+        while (unvisited.size() > 0) {
+            //Now we need to select the next node to visit.
+            //This is done by finding the node with the shortest distance to the start node out of the nodes
+            //not contained in the unvisited list.
+            float minDistance = Float.MAX_VALUE;
+            for (int i = 0; i < unvisited.size(); i++) {
+                if (pathMap.get(unvisited.get(i)).weight < minDistance) {
+                    minDistance = pathMap.get(unvisited.get(i)).weight;
+                    currentNode = unvisited.get(i);
+                }
+            }
+            //For each edge connecting to the current node we are visiting
+            for (NodeConnection edge : connections.get(currentNode)) {
+                //If the weight of the current node + the weight of the connection is less than what the node
+                //currently has, update it in the pathMap hashmap
+                if (edge.getWeight() + pathMap.get(currentNode).weight < pathMap.get(edge.getDestNode()).weight) {
+                    pathMap.get(edge.getDestNode()).weight = edge.getWeight() + pathMap.get(currentNode).weight;
+                    pathMap.get(edge.getDestNode()).previousId = currentNode;
+                }
+            }
+            //Now move this node to the visited nodes
+            unvisited.remove(unvisited.indexOf(currentNode));
+        }
+        //Now, we should have all paths calculated. We want to iterate back from the destination node to get the path
+        List<Integer> path = new ArrayList<>();
+        currentNode = endNode;
+        path.add(0, currentNode);
+        boolean startNodeReached = false;
+        while (!startNodeReached) {
+            path.add(0, pathMap.get(currentNode).previousId);
+            currentNode = path.get(0);
+            if (currentNode == startNode) {
+                startNodeReached = true;
+            }
+        }
+        //Now we have the list path. The path list contains integers indicating node id's.
+        //For example, [0, 5, 2, 4]
+
+        //Now, generate the path connection list from those integers
+        List<NodeConnection> pathNodeConnection = new ArrayList<>();
+        for (int i = 0; i < path.size() - 1; i++) {
+            //Find the node connection object
+            for (NodeConnection connection : connections.get(path.get(i))) {
+                if (connection.getDestNode() == path.get(i + 1)) {
+                    pathNodeConnection.add(connection);
+                    break;
                 }
             }
         }
-
-        // If we get here, there is no path from the start node to the end node
-        return null;
+        return(pathNodeConnection);
     }
 }

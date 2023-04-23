@@ -21,6 +21,7 @@ public class Player {
 
     public static boolean placingCable = false;
     public static int firstStructure;
+    public static boolean drawIds = true;
 
     public static void changeZoom(float zoomChange) {
         float currentZoom = Player.camera.zoom();

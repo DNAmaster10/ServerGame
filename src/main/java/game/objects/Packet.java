@@ -18,8 +18,7 @@ public class Packet {
     public int source;
     public int destination;
     public List<NodeConnection> path;
-    public float windowPositionX;
-    public float windowPositionY;
+    public Raylib.Vector2 windowPosition;
     public Cable currentCable;
     public float[] currentDeltas;
     public float currentTime;
@@ -30,15 +29,13 @@ public class Packet {
     public void reverse(Server server) {
         int temp = this.source;
         this.source = destination;
-        System.out.println("Paths total: " + server.shortestPaths.size());
         this.destination = temp;
         this.path =  new ArrayList<>(server.getPath(this.destination));
-        this.path.remove(0);
     }
 
     public void tick() {
-        windowPositionX = windowPositionX + (currentDeltas[0] * Raylib.GetFrameTime());
-        windowPositionY = windowPositionY + (currentDeltas[1] * Raylib.GetFrameTime());
+        this.windowPosition.x(this.windowPosition.x() + (currentDeltas[0] * Raylib.GetFrameTime()));
+        this.windowPosition.y(this.windowPosition.y() + (currentDeltas[1] * Raylib.GetFrameTime()));
         this.currentTime += Raylib.GetFrameTime();
         if (currentTime >= currentCable.travelTime) {
             moving = false;
@@ -46,7 +43,7 @@ public class Packet {
     }
 
     public void draw() {
-        Raylib.DrawCircle((int) windowPositionX, (int) windowPositionY, 2, color);
+        Raylib.DrawCircleV(this.windowPosition, 2, color);
     }
 
     public Packet(int source, int dest, List<NodeConnection> path) {
@@ -57,10 +54,9 @@ public class Packet {
 
         int currentGridX = MainGame.getStructureById(source).gridX;
         int currentGridY = MainGame.getStructureById(source).gridY;
-        this.windowPositionX = currentGridX * MainGame.grid.cellWindowWidth;
-        this.windowPositionY = currentGridY * MainGame.grid.cellWindowHeight;
-
-        this.path.remove(0);
+        this.windowPosition = new Raylib.Vector2();
+        this.windowPosition.x(currentGridX * MainGame.grid.cellWindowWidth);
+        this.windowPosition.y(currentGridY * MainGame.grid.cellWindowHeight);
 
 
         this.currentCable = MainGame.getCableByStructureIds(source, this.path.get(0).getDestNode());

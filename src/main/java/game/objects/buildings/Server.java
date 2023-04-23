@@ -3,6 +3,7 @@ package game.objects.buildings;
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
 import game.objects.Packet;
+import game.objects.Player;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
@@ -39,7 +40,9 @@ public class Server extends Structure {
     @Override
     public void draw() {
         Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
-        Raylib.DrawText(String.valueOf(super.id), this.windowXPos, this.windowYPos, 3, BLACK);
+        if (Player.drawIds) {
+            Raylib.DrawText(String.valueOf(super.id), this.windowXPos, this.windowYPos, 3, BLACK);
+        }
     }
 
     @Override
@@ -52,8 +55,8 @@ public class Server extends Structure {
                 }
                 else {
                     arrivingPacket.reverse(this);
-                    arrivingPacket.windowPositionX = this.windowXPos + 5;
-                    arrivingPacket.windowPositionY = this.windowYPos + 5;
+                    arrivingPacket.windowPosition.x(this.windowXPos + 5);
+                    arrivingPacket.windowPosition.y(this.windowYPos + 5);
                     arrivingPacket.currentDeltas = arrivingPacket.currentCable.getDeltas(this.id, arrivingPacket.path.get(0).getDestNode());
                     arrivingPacket.currentTime = 0f;
                     arrivingPacket.moving = true;
