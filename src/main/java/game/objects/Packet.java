@@ -22,6 +22,8 @@ public class Packet {
     public Cable currentCable;
     public float[] currentDeltas;
     public float currentTime;
+    public boolean hasReversed = false;
+    public boolean shouldRemove = false;
     public Structure currentDestStructure;
     //Indicates whether the packet has finished in journey. Used for removal later.
     public boolean hasArrived = false;
@@ -31,6 +33,7 @@ public class Packet {
         this.source = destination;
         this.destination = temp;
         this.path =  new ArrayList<>(server.getPath(this.destination));
+        this.hasReversed = true;
     }
 
     public void tick() {
@@ -40,6 +43,10 @@ public class Packet {
         if (currentTime >= currentCable.travelTime) {
             moving = false;
         }
+    }
+    public void remove() {
+        //Deleted the packet
+        this.shouldRemove = true;
     }
 
     public void draw() {

@@ -1,8 +1,11 @@
 package game.scenes.maingame;
 
+import game.objects.Packet;
 import game.objects.buildings.Consumer;
 import game.objects.buildings.Server;
+import game.objects.infrastructure.Cable;
 import game.objects.infrastructure.Router;
+import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 
 import java.util.*;
@@ -73,21 +76,23 @@ public class NodeGraph {
         return false;
     }
     public static void removeNode(int nodeId) {
-        if (!checkNode(nodeId)) {
+        if (!connections.containsKey(nodeId)) {
             return;
         }
+        //First, remove this node
         connections.remove(nodeId);
-        for (Map.Entry<Integer, List<NodeConnection>> set : connections.entrySet()) {
-            for (int i = 0; i < set.getValue().size(); i++) {
-                if(set.getValue().get(i).getDestNode() == nodeId) {
-                    set.getValue().remove(i);
-                    if (set.getValue().size() == 0) {
-                        connections.remove(set.getKey());
-                    }
-                    break;
+
+        //Then, remove the connections within the other nodes
+        for (List<NodeConnection> connection : connections.values()) {
+            for (int i = 0; i < connection.size(); i++) {
+                if (connection.get(i).getDestNode() == nodeId) {
+                    connection.remove(i);
+                    i--;
                 }
             }
         }
+        //Remove those nodes if they have no more connections
+        connections.entrySet().removeIf(e -> (e.getValue().size() == 0));
     }
 
     public static void removeEdge(int sourceNodeId, int destNodeId) {
@@ -246,5 +251,53 @@ public class NodeGraph {
             }
         }
         return(pathNodeConnection);
+    }
+
+    public static void calculatePaths() {
+        //Recalculates paths, connections to HQ e.t.c
+        for (Structure building : MainGame.buildings.values()) {
+            building.connectedToHq = NodeGraph.checkHqConnection(building.id);
+        }
+        //Now do the same for routers
+        for (Router router : MainGame.routers.values()) {
+            router.connectedToHq = NodeGraph.checkHqConnection(router.id);
+        }
+
+        //Set available servers & consumers in packets
+        Packets.availableServers.clear();
+        Packets.availableConsumers.clear();
+        for (Structure building : MainGame.buildings.values()) {
+            if (building.connectedToHq) {
+                if (building instanceof Server) {
+                    Packets.availableServers.add(building.id);
+                }
+                else if (building instanceof Consumer) {
+                    Packets.availableConsumers.add(building.id);
+                }
+            }
+        }
+
+        //Now calculate all the cached paths for consumers and servers
+        for (Consumer consumer : MainGame.consumers.values()) {
+            if (consumer.connectedToHq) {
+                consumer.calculatePaths();
+            }
+        }
+        for (Server server : MainGame.servers.values()) {
+            if (server.connectedToHq) {
+                server.calculatePaths();
+            }
+        }
+    }
+
+    public static void removeBrokenPackets(Router removedRouter) {
+        //Flag any incoming packets to the removed router for removal
+        for (Packet packet : removedRouter.arrivingPackets) {
+            packet.remove();
+        }
+        //Flag any stored packets for removal
+        for (Packet packet : removedRouter.storedPackets) {
+            packet.remove();
+        }
     }
 }

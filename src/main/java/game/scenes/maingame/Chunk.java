@@ -1,9 +1,6 @@
 package game.scenes.maingame;
 
-import game.objects.buildings.Headquarters;
-import game.objects.buildings.House;
-import game.objects.buildings.Server;
-import game.objects.buildings.SmallOffice;
+import game.objects.buildings.*;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 
@@ -79,7 +76,11 @@ public abstract class Chunk {
                 //Apartment
             }
             case 3 -> {
-                //Small Office
+                Office office = new Office(emptyCells.get(emptySpotIndex)[0], emptyCells.get(emptySpotIndex)[1]);
+                MainGame.buildings.put(office.id, office);
+                MainGame.structures.put(office.id, office);
+                MainGame.consumers.put(office.id, office);
+                this.buildings.add(office);
             }
             case 4 -> {
                 //Large Office

@@ -1,5 +1,6 @@
 package game.scenes.maingame;
 
+import game.Main;
 import game.objects.Packet;
 import game.objects.buildings.Consumer;
 import game.objects.buildings.Server;
@@ -7,6 +8,10 @@ import game.objects.infrastructure.Cable;
 import game.objects.infrastructure.Router;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Construct {
     //This class contains the methods used to build new structures
@@ -41,42 +46,59 @@ public class Construct {
         MainGame.cablesIdMap.put(sourceRouterId + "," + destRouterId, newCable);
         MainGame.cablesIdMap.put(destRouterId + "," + sourceRouterId, newCable);
 
-        //Now recalculate whether a building is connected to the HQ
-        for (Structure building : MainGame.buildings.values()) {
-            building.connectedToHq = NodeGraph.checkHqConnection(building.id);
-        }
-        //Now recalculate whether a router is connected to the HQ
-        for (Router router : MainGame.routers.values()) {
-            router.connectedToHq = NodeGraph.checkHqConnection(router.id);
+        NodeGraph.calculatePaths();
+    }
+
+    public static void removeRouterByGridPos(int gridX, int gridY) {
+        Structure structure = MainGame.getStructureByGridPos(gridX, gridY);
+        assert structure != null;
+        removeRouterById(structure.id);
+    }
+    public static void removeRouterById(int id) {
+        if (!MainGame.routers.containsKey(id)) {
+            return;
         }
 
-        //Set available servers & consumers in packets
-        Packets.availableServers.clear();
-        Packets.availableConsumers.clear();
-        for (Structure building : MainGame.buildings.values()) {
-            if (building.connectedToHq) {
-                if (building instanceof Server) {
-                    Packets.availableServers.add(building.id);
-                }
-                else if (building instanceof Consumer) {
-                    Packets.availableConsumers.add(building.id);
-                }
-            }
-        }
+        //First remove the router from structures
+        MainGame.structures.remove(id);
 
-        //Now calculate all the cached paths for consumers & servers
-        for (Consumer consumer : MainGame.consumers.values()) {
-            if (consumer.connectedToHq) {
-                consumer.calculatePaths();
+        Router removedRouter = MainGame.routers.get(id);
+        //Routers
+        MainGame.routers.remove(id);
+
+        //Remove cables
+        int[] routerIds = new int[2];
+        for (Cable cable : MainGame.cables.values()) {
+            if (cable.sourceStructureId == id || cable.destStructureId == id) {
+                routerIds[0] = cable.sourceStructureId;
+                routerIds[1] = cable.destStructureId;
+                MainGame.cablesIdMap.remove(routerIds[0] + "," + routerIds[1]);
+                MainGame.cablesIdMap.remove(routerIds[1] + "," + routerIds[0]);
             }
         }
-        System.out.println("Total servers: " + MainGame.servers.size());
-        for (Server server : MainGame.servers.values()) {
-            System.out.println("Calculating...");
-            if (server.connectedToHq) {
-                System.out.println("Calculating server paths");
-                server.calculatePaths();
-            }
+        MainGame.cables.entrySet().removeIf(e-> (e.getValue().sourceStructureId == id || e.getValue().destStructureId == id));
+
+        //Remove from node graph
+        NodeGraph.removeNode(id);
+
+        NodeGraph.calculatePaths();
+
+        NodeGraph.removeBrokenPackets(removedRouter);
+    }
+
+    public static void removeCableByStructureIds(int source, int dest) {
+        if (!MainGame.checkCableByStructureIds(source, dest)) {
+            return;
         }
+        Cable cable = MainGame.getCableByStructureIds(source, dest);
+        assert cable != null;
+        MainGame.cables.remove(cable.id);
+
+        MainGame.cablesIdMap.remove(source + "," + dest);
+        MainGame.cablesIdMap.remove(dest + "," + source);
+
+        NodeGraph.removeEdge(source, dest);
+
+        NodeGraph.calculatePaths();
     }
 }

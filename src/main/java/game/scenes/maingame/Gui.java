@@ -41,8 +41,8 @@ public class Gui {
         int buttonFontSize = 5;
 
         //Define the amount of routers and edges in the game
-        int totalRouters = 1;
-        int totalEdges = 1;
+        int totalRouters = 3;
+        int totalEdges = 2;
 
         routerButtons = new Button[totalRouters];
         edgeButtons = new Button[totalEdges];
@@ -58,11 +58,20 @@ public class Gui {
         routerNames[0] = "Small Router";
         routerLevels[0] = 1;
 
+        routerNames[1] = "Medium Router";
+        routerLevels[1] = 2;
+
+        routerNames[2] = "Large Router";
+        routerLevels[2] = 3;
+
         //Add same for edges when they exist
         String[] edgeNames = new String[totalEdges];
 
         edgeNames[0] = "Copper Cable";
         edgeLevels[0] = 1;
+
+        edgeNames[1] = "Gold Cable";
+        edgeLevels[1] = 2;
 
 
         for (int i = 0; i < routerButtons.length; i++) {

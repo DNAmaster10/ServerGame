@@ -95,11 +95,20 @@ public class Controls {
                 }
             }
             else if (Raylib.IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+                //If the player is placing cable
                 if (Player.properties.currentSelectedStructureType == 1) {
                     if (Player.placingCable) {
                         Player.placingCable = false;
                         Player.firstStructure = -1;
+                        return;
                     }
+                }
+                Raylib.Vector2 screenToWorldPos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Player.camera);
+                int gridX = Math.round(screenToWorldPos.x() / MainGame.grid.cellWindowWidth);
+                int gridY = Math.round(screenToWorldPos.y() / MainGame.grid.cellWindowHeight);
+                Structure structure = MainGame.getStructureByGridPos(gridX, gridY);
+                if (structure instanceof Router) {
+                    Construct.removeRouterByGridPos(gridX, gridY);
                 }
             }
             //Camera

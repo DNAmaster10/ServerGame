@@ -56,7 +56,13 @@ public abstract class Consumer extends Structure {
                 }
                 //now add the packet to the next router
                 packet.moving = true;
-                MainGame.getStructureById(packet.path.get(0).getDestNode()).arrivingPackets.add(packet);
+                Structure nextStructure = MainGame.getStructureById(packet.path.get(0).getDestNode());
+                if (nextStructure == null) {
+                    packet.remove();
+                }
+                else {
+                    nextStructure.arrivingPackets.add(packet);
+                }
                 lastPacketTime = Raylib.GetTime();
             }
         }
@@ -75,13 +81,14 @@ public abstract class Consumer extends Structure {
                         emitting = true;
                     }
                 }
-                //Get a random server
+                //Get a random server if the favourite server either isn't connected to the HQ, or
+                //if the random chance decided to pick a random server.
+                //Node: This will also have a chance to pick the favourite server too.
                 if (!Packets.availableServers.isEmpty() && !emitting) {
-
                     int server = Packets.availableServers.get(ThreadLocalRandom.current().nextInt(0, Packets.availableServers.size()));
                     int packetCount = ThreadLocalRandom.current().nextInt(this.minPackets, this.maxPackets + 1);
                     for (int i = 0; i < packetCount; i++) {
-                        this.departingPackets.add(Packets.availableServers.get(0));
+                        this.departingPackets.add(server);
                     }
                     emitting = true;
                 }
@@ -91,10 +98,12 @@ public abstract class Consumer extends Structure {
         //Deal with incoming packets
         if (!super.arrivingPackets.isEmpty()) {
             for (int i = 0; i < arrivingPackets.size(); i++) {
+                //If the packet hasn't reached the consumer, move it
                 if (arrivingPackets.get(i).moving) {
                     arrivingPackets.get(i).tick();
                 }
                 else {
+                    //if it has, then remove the packet and change money e.t.c
                     arrivingPackets.get(i).moving = false;
                     arrivingPackets.get(i).hasArrived = true;
                     Player.deliveredPackets++;

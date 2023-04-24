@@ -54,13 +54,31 @@ public class Server extends Structure {
                     arrivingPacket.tick();
                 }
                 else {
+                    if (!this.connectedToHq) {
+                        arrivingPacket.remove();
+                        arrivingPackets.remove(i);
+                        i--;
+                        continue;
+                    }
+                    else if (!MainGame.getStructureById(arrivingPacket.source).connectedToHq) {
+                        arrivingPacket.remove();
+                        arrivingPackets.remove(i);
+                        i--;
+                        continue;
+                    }
                     arrivingPacket.reverse(this);
                     arrivingPacket.windowPosition.x(this.windowXPos + 5);
                     arrivingPacket.windowPosition.y(this.windowYPos + 5);
                     arrivingPacket.currentDeltas = arrivingPacket.currentCable.getDeltas(this.id, arrivingPacket.path.get(0).getDestNode());
                     arrivingPacket.currentTime = 0f;
                     arrivingPacket.moving = true;
-                    MainGame.getStructureById(arrivingPacket.path.get(0).getDestNode()).arrivingPackets.add(arrivingPacket);
+                    Structure nextStructure = MainGame.getStructureById(arrivingPacket.path.get(0).getDestNode());
+                    if (nextStructure == null) {
+                        arrivingPacket.remove();
+                    }
+                    else {
+                        nextStructure.arrivingPackets.add(arrivingPacket);
+                    }
                     arrivingPackets.remove(i);
                     i--;
                 }

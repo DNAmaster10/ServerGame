@@ -120,6 +120,18 @@ public class Cable {
                     reliability = CopperCable.maxReliability;
                 }
             }
+            case 2 -> {
+                travelTime = gridLength / GoldCable.speed;
+                if (gridLength > GoldCable.maxLength) {
+                    reliability = (int) (GoldCable.minReliability - ((GoldCable.maxLength - gridLength) * GoldCable.reliabilityDrop));
+                    if (reliability < GoldCable.minReliability) {
+                        reliability = GoldCable.minReliability;
+                    }
+                }
+                else {
+                    reliability = GoldCable.minReliability;
+                }
+            }
         }
         //Recalculate correct verion of deltaX
         deltaX = windowXPosEnd - windowXPosStart;

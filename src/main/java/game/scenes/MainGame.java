@@ -223,14 +223,7 @@ public class MainGame {
         //Controls
         handleControls();
         Packets.tickPackets();
-        if (Raylib.GetTime() - lastPacketRemoval > packetRemovalInterval) {
-            for (int i = 0; i < packets.size(); i++) {
-                if (packets.get(i).hasArrived) {
-                    packets.remove(i);
-                    i--;
-                }
-            }
-        }
+        packets.removeIf(packet -> packet.hasArrived || packet.shouldRemove);
         if (Raylib.GetTime() - lastGenerate > generateInterval) {
             generate();
             //Reset generation time
