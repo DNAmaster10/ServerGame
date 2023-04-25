@@ -19,9 +19,11 @@ public class Office extends Consumer {
     public void draw() {
 
         Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, BLUE);
+        /*
         if (Player.drawIds) {
             Raylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
         }
+         */
     }
     public Office(int gridX, int gridY) {
         super.id = Ids.getNewId();

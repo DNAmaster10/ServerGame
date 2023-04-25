@@ -22,6 +22,10 @@ public class Construct {
             MainGame.routers.put(newRouter.id, newRouter);
             MainGame.structures.put(newRouter.id, newRouter);
         }
+        else if (MainGame.getStructureByGridPos(gridX, gridY) instanceof Router) {
+            assert MainGame.getStructureByGridPos(gridX, gridY) != null;
+            ((Router) MainGame.getStructureByGridPos(gridX, gridY)).upgrade(level);
+        }
         else {
             System.out.println("Cannot place here: Structure already exists");
             System.out.println(NodeGraph.findShortestPath(MainGame.getStructureByGridPos(gridX, gridY).id, MainGame.HQId));

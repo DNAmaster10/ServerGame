@@ -6,6 +6,8 @@ import game.scenes.TickScenes;
 
 import static com.raylib.Jaylib.*;
 
+import com.raylib.java.Raylib;
+
 public class Main {
     public static void main (String[] args) throws Exception {
         InitWindow(Window.properties.windowWidth, Window.properties.windowHeight, "Internet Game");

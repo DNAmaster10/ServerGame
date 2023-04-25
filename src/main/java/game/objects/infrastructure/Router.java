@@ -70,62 +70,62 @@ public class Router extends Structure {
         //Now we deal with stored packets
 
         //If the router has any
-        if (!storedPackets.isEmpty()) {
+        while (!storedPackets.isEmpty() && Raylib.GetTime() - lastPacketRelease > packetHandleDelay) {
             //If the router is ready to handle another packet
-            if (Raylib.GetTime() - lastPacketRelease > packetHandleDelay) {
-                //Get the next packet to handle
-                Packet packet = storedPackets.get(0);
+            //Get the next packet to handle
+            Packet packet = storedPackets.get(0);
 
-                //Set the packets new window position
-                packet.windowPosition.x(this.windowXPos);
-                packet.windowPosition.y(this.windowYPos);
+            //Set the packets new window position
+            packet.windowPosition.x(this.windowXPos);
+            packet.windowPosition.y(this.windowYPos);
 
-                //if the packets path is empty
-                if (packet.path.size() == 0) {
-                    packet.currentCable = MainGame.getCableByStructureIds(super.id, packet.destination);
-                    //Check if the next cable hasn't been deleted
-                    if (packet.currentCable == null) {
-                        packet.remove();
-                        Player.lostPackets++;
-                    }
-                    else {
-                        packet.currentDeltas = packet.currentCable.getDeltas(super.id, packet.destination);
-                        Structure nextStructure = MainGame.getStructureById(packet.destination);
-                        if (nextStructure == null) {
-                            packet.remove();
-                            Player.lostPackets++;
-                        }
-                        else {
-                            nextStructure.arrivingPackets.add(packet);
-                        }
-                    }
+            //if the packets path is empty
+            if (packet.path.size() == 0) {
+                packet.currentCable = MainGame.getCableByStructureIds(super.id, packet.destination);
+                //Check if the next cable hasn't been deleted
+                if (packet.currentCable == null) {
+                    packet.remove();
+                    Player.lostPackets++;
                 }
                 else {
-                    packet.currentCable = MainGame.getCableByStructureIds(super.id, packet.path.get(0).getDestNode());
-                    if (packet.currentCable == null) {
+                    packet.currentDeltas = packet.currentCable.getDeltas(super.id, packet.destination);
+                    Structure nextStructure = MainGame.getStructureById(packet.destination);
+                    if (nextStructure == null) {
                         packet.remove();
                         Player.lostPackets++;
                     }
                     else {
-                        packet.currentDeltas = packet.currentCable.getDeltas(super.id, packet.path.get(0).getDestNode());
-                        Structure nextStructure = MainGame.getStructureById(packet.path.get(0).getDestNode());
-                        if (nextStructure == null) {
-                            packet.remove();
-                            Player.lostPackets++;
-                        }
-                        else {
-                            nextStructure.arrivingPackets.add(packet);
-                        }
+                        nextStructure.arrivingPackets.add(packet);
                     }
                 }
-                packet.currentTime = 0f;
-                packet.moving = true;
-                lastPacketRelease = (float) Raylib.GetTime();
             }
-            //remove any packets from the cache if they have departed
-            storedPackets.removeIf(packet -> packet.moving);
-            storedPackets.removeIf(packet -> packet.shouldRemove);
+            else {
+                packet.currentCable = MainGame.getCableByStructureIds(super.id, packet.path.get(0).getDestNode());
+                if (packet.currentCable == null) {
+                    packet.remove();
+                    Player.lostPackets++;
+                }
+                else {
+                    packet.currentDeltas = packet.currentCable.getDeltas(super.id, packet.path.get(0).getDestNode());
+                    Structure nextStructure = MainGame.getStructureById(packet.path.get(0).getDestNode());
+                    if (nextStructure == null) {
+                        packet.remove();
+                        Player.lostPackets++;
+                    }
+                    else {
+                        nextStructure.arrivingPackets.add(packet);
+                    }
+                }
+            }
+            packet.currentTime = 0f;
+            packet.moving = true;
+            lastPacketRelease += packetHandleDelay;
+
+            storedPackets.removeIf(e -> e.moving);
+            storedPackets.removeIf(e -> e.shouldRemove);
+        //remove any packets from the cache if they have departed
         }
+
         if (preCacheSize != storedPackets.size()) {
             //Recalculate colour
             int newColourValue = (int) (storedPackets.size() * this.colourChange);
@@ -140,11 +140,25 @@ public class Router extends Structure {
 
     public void upgrade(int level) {
         switch(level) {
-            case 1: {
+            case 1 -> {
                 packetHandleDelay = SmallRouter.packetHandleDelay;
                 cacheSize = SmallRouter.maxCacheSize;
                 routerLevel = level;
-                break;
+            }
+            case 2 -> {
+                packetHandleDelay = MediumRouter.packetHandleDelay;
+                cacheSize = MediumRouter.maxCacheSize;
+                routerLevel = level;
+            }
+            case 3 -> {
+                packetHandleDelay = LargeRouter.packetHandleDelay;
+                cacheSize = LargeRouter.maxCacheSize;
+                routerLevel = level;
+            }
+            case 4 -> {
+                packetHandleDelay = HugeRouter.packetHandleDelay;
+                cacheSize = HugeRouter.maxCacheSize;
+                routerLevel = level;
             }
         }
     }
@@ -172,6 +186,11 @@ public class Router extends Structure {
             case 3 -> {
                 packetHandleDelay = LargeRouter.packetHandleDelay;
                 cacheSize = LargeRouter.maxCacheSize;
+                routerLevel = level;
+            }
+            case 4 -> {
+                packetHandleDelay = HugeRouter.packetHandleDelay;
+                cacheSize = HugeRouter.maxCacheSize;
                 routerLevel = level;
             }
         }
