@@ -1,17 +1,13 @@
 package game.scenes.maingame;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
 import game.Window;
-import game.objects.Player;
-import game.objects.infrastructure.Router;
 import game.objects.ui.Button;
-import game.scenes.MainGame;
 
-import static com.raylib.Jaylib.BLACK;
-import static com.raylib.Jaylib.WHITE;
-import static com.raylib.Raylib.GetMouseX;
-import static com.raylib.Raylib.GetMouseY;
+import com.raylib.java.Raylib;
+
+import static com.raylib.java.core.Color.BLACK;
+import static com.raylib.java.core.Color.WHITE;
+import static game.Window.properties.rl;
 
 public class Gui {
     public static int width = 100;
@@ -86,7 +82,7 @@ public class Gui {
     }
     public static void draw() {
         //Draw background
-        Jaylib.DrawRectangle(Window.properties.windowWidth - width, 0, width, Window.properties.windowHeight, WHITE);
+        rl.shapes.DrawRectangle(Window.properties.windowWidth - width, 0, width, Window.properties.windowHeight, WHITE);
 
         //Draw toggle buttons
         toggleRouterSelection.draw();

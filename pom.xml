@@ -13,12 +13,4 @@
         <maven.compiler.target>18</maven.compiler.target>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>uk.co.electronstudio.jaylib</groupId>
-            <artifactId>jaylib</artifactId>
-            <version>[4.2.0,4.3)</version>
-        </dependency>
-    </dependencies>
-
 </project>

@@ -1,15 +1,12 @@
 package game.objects.infrastructure;
 
-import com.raylib.Raylib;
+import com.raylib.java.raymath.Vector2;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 import game.scenes.maingame.NodeGraph;
 
-import java.io.IOError;
-
-import static com.raylib.Jaylib.BLACK;
-import static com.raylib.Raylib.DrawLine;
-import static com.raylib.Raylib.DrawLineEx;
+import static com.raylib.java.core.Color.BLACK;
+import static game.Window.properties.rl;
 import static java.lang.Math.sqrt;
 
 public class Cable {
@@ -24,8 +21,8 @@ public class Cable {
     public int windowYPosStart;
     public int windowXPosEnd;
     public int windowYPosEnd;
-    public Raylib.Vector2 startPos = new Raylib.Vector2();
-    public Raylib.Vector2 endPos = new Raylib.Vector2();
+    public Vector2 startPos = new Vector2();
+    public Vector2 endPos = new Vector2();
     public int sourceStructureId;
     public int destStructureId;
     //These are the numbers to add to x and y for packets each step
@@ -35,7 +32,7 @@ public class Cable {
     public float reverseXPerSecond;
     public float reverseYPerSecond;
 
-    public float[] getDeltas(int sourceId, int destId) {
+    public float[] getDeltas(int sourceId) {
         //returns a different delta x or delta y depending on which is the source and dest
         if (sourceId == this.sourceStructureId) {
             float[] returnFloat = new float[2];
@@ -52,8 +49,7 @@ public class Cable {
     }
 
     public void draw() {
-
-        DrawLineEx(startPos, endPos, 1, BLACK);
+        rl.shapes.DrawLineEx(startPos, endPos, 1, BLACK);
     }
 
     public void upgrade(int level) {
@@ -92,10 +88,10 @@ public class Cable {
         windowXPosEnd = destStructure.gridX * MainGame.grid.cellWindowWidth;
         windowYPosEnd = destStructure.gridY * MainGame.grid.cellWindowHeight;
 
-        startPos.x(windowXPosStart);
-        startPos.y(windowYPosStart);
-        endPos.x(windowXPosEnd);
-        endPos.y(windowYPosEnd);
+        startPos.x = windowXPosStart;
+        startPos.y = windowYPosStart;
+        endPos.x = windowXPosEnd;
+        endPos.y = windowYPosEnd;
 
         this.sourceStructureId = sourceStructureId;
         this.destStructureId = destStructureId;

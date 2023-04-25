@@ -1,6 +1,5 @@
 package game.objects.buildings;
 
-import com.raylib.Raylib;
 import game.objects.Packet;
 import game.objects.Player;
 import game.objects.infrastructure.Structure;
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.raylib.java.core.rCore.GetTime;
 
 public abstract class Consumer extends Structure {
     //A hash map containing all shortest paths to all servers on the map. Recalculated upon cable placement
@@ -48,7 +49,7 @@ public abstract class Consumer extends Structure {
         }
         //If already emitting, check if a packet should be released and release it
         if (emitting) {
-            if (Raylib.GetTime() - lastPacketTime > packetEmitDelay) {
+            if (GetTime() - lastPacketTime > packetEmitDelay) {
                 Packet packet = new Packet(this.id, departingPackets.get(0), this.getPath(departingPackets.get(0)));
                 departingPackets.remove(0);
                 if (departingPackets.size() == 0) {
@@ -63,7 +64,7 @@ public abstract class Consumer extends Structure {
                 else {
                     nextStructure.arrivingPackets.add(packet);
                 }
-                lastPacketTime = Raylib.GetTime();
+                lastPacketTime = GetTime();
             }
         }
         //Decide whether the building should start emitting packets

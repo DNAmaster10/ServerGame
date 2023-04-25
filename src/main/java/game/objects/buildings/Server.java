@@ -1,7 +1,6 @@
 package game.objects.buildings;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
+import com.raylib.java.core.Color;
 import game.objects.Packet;
 import game.objects.Player;
 import game.objects.infrastructure.Structure;
@@ -10,19 +9,19 @@ import game.scenes.maingame.Ids;
 import game.scenes.maingame.NodeConnection;
 import game.scenes.maingame.NodeGraph;
 import game.scenes.maingame.Packets;
-import org.w3c.dom.Node;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
-import static com.raylib.Jaylib.BLACK;
+import static com.raylib.java.core.Color.BLACK;
+import static game.Window.properties.rl;
+
 
 public class Server extends Structure {
     public int windowXPos;
     public int windowYPos;
-    public Raylib.Color color = new Jaylib.Color(255, 157, 0, 255);
+    public Color color = new Color(255, 157, 0, 255);
     public HashMap<Integer, List<NodeConnection>> shortestPaths = new HashMap<>();
 
     public void calculatePaths() {
@@ -39,9 +38,9 @@ public class Server extends Structure {
 
     @Override
     public void draw() {
-        Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
+        rl.shapes.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
         if (Player.drawIds) {
-            Raylib.DrawText(String.valueOf(super.id), this.windowXPos, this.windowYPos, 3, BLACK);
+            rl.text.DrawText(String.valueOf(super.id), this.windowXPos, this.windowYPos, 3, BLACK);
         }
     }
 
@@ -60,16 +59,16 @@ public class Server extends Structure {
                         i--;
                         continue;
                     }
-                    else if (!MainGame.getStructureById(arrivingPacket.source).connectedToHq) {
+                    else if (!Objects.requireNonNull(MainGame.getStructureById(arrivingPacket.source)).connectedToHq) {
                         arrivingPacket.remove();
                         arrivingPackets.remove(i);
                         i--;
                         continue;
                     }
                     arrivingPacket.reverse(this);
-                    arrivingPacket.windowPosition.x(this.windowXPos + 5);
-                    arrivingPacket.windowPosition.y(this.windowYPos + 5);
-                    arrivingPacket.currentDeltas = arrivingPacket.currentCable.getDeltas(this.id, arrivingPacket.path.get(0).getDestNode());
+                    arrivingPacket.windowPosition.x = this.windowXPos + 5;
+                    arrivingPacket.windowPosition.y = this.windowYPos + 5;
+                    arrivingPacket.currentDeltas = arrivingPacket.currentCable.getDeltas(this.id);
                     arrivingPacket.currentTime = 0f;
                     arrivingPacket.moving = true;
                     Structure nextStructure = MainGame.getStructureById(arrivingPacket.path.get(0).getDestNode());

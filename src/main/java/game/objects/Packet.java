@@ -1,30 +1,31 @@
 package game.objects;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
+import com.raylib.java.core.Color;
+import com.raylib.java.raymath.Vector2;
 import game.objects.buildings.Server;
 import game.objects.infrastructure.Cable;
-import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.NodeConnection;
-import game.scenes.maingame.NodeGraph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.raylib.java.core.rCore.GetFrameTime;
+import static game.Window.properties.rl;
 
 public class Packet {
     public boolean moving = false;
-    public Jaylib.Color color = new Jaylib.Color(0, 0, 0, 255);
+    public Color color = new Color(0, 0, 0, 255);
     public int source;
     public int destination;
     public List<NodeConnection> path;
-    public Raylib.Vector2 windowPosition;
+    public Vector2 windowPosition;
     public Cable currentCable;
     public float[] currentDeltas;
     public float currentTime;
     public boolean hasReversed = false;
     public boolean shouldRemove = false;
-    public Structure currentDestStructure;
     //Indicates whether the packet has finished in journey. Used for removal later.
     public boolean hasArrived = false;
 
@@ -37,9 +38,9 @@ public class Packet {
     }
 
     public void tick() {
-        this.windowPosition.x(this.windowPosition.x() + (currentDeltas[0] * Raylib.GetFrameTime()));
-        this.windowPosition.y(this.windowPosition.y() + (currentDeltas[1] * Raylib.GetFrameTime()));
-        this.currentTime += Raylib.GetFrameTime();
+        this.windowPosition.x = this.windowPosition.x + (currentDeltas[0] * GetFrameTime());
+        this.windowPosition.y = this.windowPosition.y + (currentDeltas[1] * GetFrameTime());
+        this.currentTime += GetFrameTime();
         if (currentTime >= currentCable.travelTime) {
             moving = false;
         }
@@ -51,7 +52,7 @@ public class Packet {
 
     public void draw() {
         if (this.moving) {
-            Raylib.DrawCircleV(this.windowPosition, 2, color);
+            rl.shapes.DrawCircleV(this.windowPosition, 2, color);
         }
     }
 
@@ -61,16 +62,17 @@ public class Packet {
 
         this.path = new ArrayList<>(path);
 
-        int currentGridX = MainGame.getStructureById(source).gridX;
-        int currentGridY = MainGame.getStructureById(source).gridY;
-        this.windowPosition = new Raylib.Vector2();
-        this.windowPosition.x(currentGridX * MainGame.grid.cellWindowWidth);
-        this.windowPosition.y(currentGridY * MainGame.grid.cellWindowHeight);
+        int currentGridX = Objects.requireNonNull(MainGame.getStructureById(source)).gridX;
+        int currentGridY = Objects.requireNonNull(MainGame.getStructureById(source)).gridY;
+        this.windowPosition = new Vector2();
+        this.windowPosition.x = currentGridX * MainGame.grid.cellWindowWidth;
+        this.windowPosition.y = currentGridY * MainGame.grid.cellWindowHeight;
 
 
         this.currentCable = MainGame.getCableByStructureIds(source, this.path.get(0).getDestNode());
         this.currentTime = 0f;
-        this.currentDeltas = this.currentCable.getDeltas(source, this.path.get(0).getDestNode());
+        assert this.currentCable != null;
+        this.currentDeltas = this.currentCable.getDeltas(source);
 
         MainGame.packets.add(this);
     }

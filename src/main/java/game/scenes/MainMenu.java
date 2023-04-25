@@ -1,15 +1,17 @@
 package game.scenes;
 
-import com.raylib.Jaylib;
+import com.raylib.java.Raylib;
 import game.Window;
 import game.objects.Player;
 import game.objects.ui.Button;
 
-import static com.raylib.Jaylib.*;
-import static com.raylib.Raylib.ClearBackground;
+import static com.raylib.java.core.Color.WHITE;
+import static com.raylib.java.core.Color.BLACK;
+
 
 public class MainMenu {
     //Id is 1
+    private static Raylib rl = Window.properties.rl;
 
     private static Button newGameButton;
     private static Button loadGameButton;
@@ -33,12 +35,12 @@ public class MainMenu {
         }
         else if(exitGameButton.checkClick()) {
             System.out.println("Exiting");
-            CloseWindow();
+            rl.core.CloseWindow();
         }
     }
 
     public static void draw() {
-        ClearBackground(WHITE);
+        rl.core.ClearBackground(WHITE);
 
         //Draw Buttons
         newGameButton.draw();

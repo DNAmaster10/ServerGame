@@ -1,9 +1,10 @@
 package game.objects.buildings;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
+import com.raylib.java.core.Color;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
+
+import static game.Window.properties.rl;
 
 public class LargeOffice extends Consumer {
     public static int packetsPerSecond = 1;
@@ -14,11 +15,11 @@ public class LargeOffice extends Consumer {
     public static int maxPackets = 20;
     public int windowXPos;
     public int windowYPos;
-    public static Jaylib.Color color = new Jaylib.Color(6, 81, 186, 255);
+    public static Color color = new Color(6, 81, 186, 255);
 
     @Override
     public void draw() {
-        Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
+        rl.shapes.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
     }
 
     @Override

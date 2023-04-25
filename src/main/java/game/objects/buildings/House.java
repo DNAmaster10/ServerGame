@@ -1,8 +1,6 @@
 package game.objects.buildings;
 
-import com.raylib.Raylib;
 import game.objects.Player;
-import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 
@@ -10,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.raylib.Jaylib.BLACK;
-import static com.raylib.Jaylib.GREEN;
+import static com.raylib.java.core.Color.BLACK;
+import static com.raylib.java.core.Color.GREEN;
+import static game.Window.properties.rl;
 
 public class House extends Consumer {
     public int windowXPos;
@@ -19,9 +18,9 @@ public class House extends Consumer {
 
     @Override
     public void draw() {
-        Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, GREEN);
+        rl.shapes.DrawRectangle(windowXPos, windowYPos, 10, 10, GREEN);
         if (Player.drawIds) {
-            Raylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
+            rl.text.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
         }
     }
     public House(int gridX, int gridY) {

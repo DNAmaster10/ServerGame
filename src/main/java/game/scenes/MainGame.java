@@ -1,6 +1,5 @@
 package game.scenes;
 
-import com.raylib.Raylib;
 import game.objects.Packet;
 import game.objects.Player;
 import game.objects.buildings.Consumer;
@@ -18,7 +17,13 @@ import game.objects.chunks.SpawnChunk;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.raylib.Jaylib.*;
+import com.raylib.java.Raylib;
+
+import static com.raylib.java.core.Color.BLACK;
+import static com.raylib.java.core.Color.WHITE;
+import static com.raylib.java.core.rCore.GetMousePosition;
+import static com.raylib.java.core.rCore.GetTime;
+import static game.Window.properties.rl;
 
 public class MainGame {
     //Used for the timing of packet removal
@@ -104,7 +109,7 @@ public class MainGame {
         SpawnChunk firstChunk = new SpawnChunk(0, 0);
         firstChunk.generateFull();
         chunks.put(firstChunk.id, firstChunk);
-        lastPacketRemoval = (int) Raylib.GetTime();
+        lastPacketRemoval = (int) GetTime();
     }
     public static void generate() {
         //First, check if any chunks are not already full
@@ -224,16 +229,16 @@ public class MainGame {
         handleControls();
         Packets.tickPackets();
         packets.removeIf(packet -> packet.hasArrived || packet.shouldRemove);
-        if (Raylib.GetTime() - lastGenerate > generateInterval) {
+        if (GetTime() - lastGenerate > generateInterval) {
             generate();
             //Reset generation time
-            lastGenerate = (int) Raylib.GetTime();
+            lastGenerate = (int) GetTime();
         }
     }
 
     public static void draw() {
-        ClearBackground(WHITE);
-        Raylib.BeginMode2D(Player.camera);
+        rl.core.ClearBackground(WHITE);
+        rl.core.BeginMode2D(Player.camera);
         for (Cable value : cables.values()) {
             value.draw();
         }
@@ -247,7 +252,7 @@ public class MainGame {
         if (Player.placingCable) {
             Structure startStructure = MainGame.getStructureById(Player.firstStructure);
             assert startStructure != null;
-            Raylib.DrawLine(startStructure.gridX * grid.cellWindowWidth, startStructure.gridY * grid.cellWindowHeight, (int) GetScreenToWorld2D(GetMousePosition(), Player.camera).x(), (int) GetScreenToWorld2D(GetMousePosition(), Player.camera).y(), BLACK);
+            rl.shapes.DrawLine(startStructure.gridX * grid.cellWindowWidth, startStructure.gridY * grid.cellWindowHeight, (int) rl.core.GetScreenToWorld2D(GetMousePosition(), Player.camera).x, (int) rl.core.GetScreenToWorld2D(GetMousePosition(), Player.camera).y, BLACK);
         }
         //Draw packets
         for (Packet packet : MainGame.packets) {
@@ -258,12 +263,12 @@ public class MainGame {
         //    Raylib.DrawText(String.valueOf(chunk.id) + ", " + chunk.bordersFull, chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkHeight * grid.cellWindowHeight, 3, WHITE);
         //    Raylib.DrawRectangleLines(chunk.chunkX * grid.chunkWidth * grid.cellWindowWidth, chunk.chunkY * grid.chunkWidth * grid.cellWindowHeight, grid.chunkWidth * grid.cellWindowWidth, grid.chunkHeight * grid.cellWindowHeight, BLACK);
         //}
-        Raylib.DrawRectangle(-2, -2, 4, 4, BLACK);
-        Raylib.EndMode2D();
+        rl.shapes.DrawRectangle(-2, -2, 4, 4, BLACK);
+        rl.core.EndMode2D();
         //Draw money and packet details
-        Raylib.DrawText("Delivered Packets: " + Player.deliveredPackets, 120, 10, 10, BLACK);
-        Raylib.DrawText("Lost Packets: " + Player.lostPackets, 240, 10, 10, BLACK);
-        Raylib.DrawText("Total structures: " + (routers.size() + cables.size()), 10, 10, 10, BLACK);
+        rl.text.DrawText("Delivered Packets: " + Player.deliveredPackets, 120, 10, 10, BLACK);
+        rl.text.DrawText("Lost Packets: " + Player.lostPackets, 250, 10, 10, BLACK);
+        rl.text.DrawText("Total structures: " + (routers.size() + cables.size()), 10, 10, 10, BLACK);
         Gui.draw();
     }
 }

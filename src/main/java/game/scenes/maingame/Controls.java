@@ -1,17 +1,25 @@
 package game.scenes.maingame;
 
-import com.raylib.Raylib;
+import com.raylib.java.core.rCore;
+import com.raylib.java.raymath.Vector2;
 import game.Window;
 import game.objects.Player;
 import game.objects.infrastructure.Router;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 
-import static com.raylib.Raylib.*;
+import com.raylib.java.Raylib;
+
+import static com.raylib.java.core.input.Keyboard.KEY_R;
+import static com.raylib.java.core.input.Mouse.MouseButton.MOUSE_BUTTON_LEFT;
+import static com.raylib.java.core.input.Mouse.MouseButton.MOUSE_BUTTON_RIGHT;
+import static com.raylib.java.core.rCore.GetMousePosition;
+import static com.raylib.java.core.rCore.GetMouseWheelMove;
+import static game.Window.properties.rl;
 
 public class Controls {
     public static void handleInputs() throws Exception {
-        if (GetMouseX() > Window.properties.windowWidth - Gui.width) {
+        if (rl.core.GetMouseX() > Window.properties.windowWidth - Gui.width) {
             if (Gui.toggleRouterSelection.checkClick()) {
                 Gui.currentSelectedMenu = 0;
                 Player.properties.currentSelectedStructureType = 0;
@@ -41,20 +49,20 @@ public class Controls {
         }
         else {
             //Is the player currently left-clicking?
-            if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
+            if (rl.core.IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 //If player has "routers" selected
                 if (Player.properties.currentSelectedStructureType == 0) {
                     //Then place a router if there isn't already a router present in the given cell
-                    Raylib.Vector2 screenToWorldPos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Player.camera);
-                    int gridX = Math.round(screenToWorldPos.x() / MainGame.grid.cellWindowWidth);
-                    int gridY = Math.round(screenToWorldPos.y() / MainGame.grid.cellWindowHeight);
+                    Vector2 screenToWorldPos = rl.core.GetScreenToWorld2D(GetMousePosition(), Player.camera);
+                    int gridX = Math.round(screenToWorldPos.x / MainGame.grid.cellWindowWidth);
+                    int gridY = Math.round(screenToWorldPos.y / MainGame.grid.cellWindowHeight);
                     Construct.placeRouter(Player.properties.currentStructureLevel, gridX, gridY);
                 }
                 //If the player has "Cables" selected
                 else if (Player.properties.currentSelectedStructureType == 1) {
-                    Raylib.Vector2 screenToWorldPos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Player.camera);
-                    int gridX = Math.round(screenToWorldPos.x() / MainGame.grid.cellWindowWidth);
-                    int gridY = Math.round(screenToWorldPos.y() / MainGame.grid.cellWindowHeight);
+                    Vector2 screenToWorldPos = rl.core.GetScreenToWorld2D(GetMousePosition(), Player.camera);
+                    int gridX = Math.round(screenToWorldPos.x / MainGame.grid.cellWindowWidth);
+                    int gridY = Math.round(screenToWorldPos.y / MainGame.grid.cellWindowHeight);
                     //If the player is already in the process of placing a cable
                     if (Player.placingCable) {
                         Structure secondStructure = MainGame.getStructureByGridPos(gridX, gridY);
@@ -94,7 +102,7 @@ public class Controls {
                     }
                 }
             }
-            else if (Raylib.IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+            else if (rl.core.IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
                 //If the player is placing cable
                 if (Player.properties.currentSelectedStructureType == 1) {
                     if (Player.placingCable) {
@@ -103,9 +111,9 @@ public class Controls {
                         return;
                     }
                 }
-                Raylib.Vector2 screenToWorldPos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Player.camera);
-                int gridX = Math.round(screenToWorldPos.x() / MainGame.grid.cellWindowWidth);
-                int gridY = Math.round(screenToWorldPos.y() / MainGame.grid.cellWindowHeight);
+                Vector2 screenToWorldPos = rl.core.GetScreenToWorld2D(GetMousePosition(), Player.camera);
+                int gridX = Math.round(screenToWorldPos.x / MainGame.grid.cellWindowWidth);
+                int gridY = Math.round(screenToWorldPos.y / MainGame.grid.cellWindowHeight);
                 Structure structure = MainGame.getStructureByGridPos(gridX, gridY);
                 if (structure instanceof Router) {
                     Construct.removeRouterByGridPos(gridX, gridY);
@@ -115,7 +123,7 @@ public class Controls {
             if (GetMouseWheelMove() != 0) {
                 Player.changeZoom(GetMouseWheelMove());
             }
-            if (IsKeyPressed(KEY_R)) {
+            if (rl.core.IsKeyPressed(KEY_R)) {
                 Player.resetCam();
             }
         }

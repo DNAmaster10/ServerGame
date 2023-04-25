@@ -1,8 +1,11 @@
 package game.objects;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
+import com.raylib.java.core.camera.Camera2D;
+import com.raylib.java.core.camera.rCamera;
+import com.raylib.java.raymath.Vector2;
 
+import static com.raylib.java.core.rCore.GetMousePosition;
+import static game.Window.properties.rl;
 import static game.objects.Player.properties.currentScene;
 
 public class Player {
@@ -16,8 +19,8 @@ public class Player {
     public static void setScene(int scene) {
         currentScene = scene;
     }
-    public static Raylib.Camera2D camera = new Raylib.Camera2D(0);
-    public static Raylib.Vector2 cameraTarget = new Jaylib.Vector2();
+    public static Camera2D camera = new Camera2D();
+    public static Vector2 cameraTarget = new Vector2();
 
     public static boolean placingCable = false;
     public static int firstStructure;
@@ -27,27 +30,28 @@ public class Player {
     public static int deliveredPackets;
 
     public static void changeZoom(float zoomChange) {
-        float currentZoom = Player.camera.zoom();
+        float currentZoom = camera.zoom;
         currentZoom += zoomChange;
         if (currentZoom < 1) {
             currentZoom = 1;
         }
-        Raylib.Vector2 mouseWorldPos = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Player.camera);
-        Player.camera.offset(Raylib.GetMousePosition());
-        Player.camera.target(mouseWorldPos);
-        Player.camera.zoom(currentZoom);
+        Vector2 mouseWorldPos = rl.core.GetScreenToWorld2D(GetMousePosition(), Player.camera);
+        Player.camera.offset = GetMousePosition();
+        Player.camera.target = mouseWorldPos;
+        Player.camera.zoom = currentZoom;
     }
 
     public static void resetCam() {
-        Player.camera.rotation(0.0f);
-        Player.camera.target(cameraTarget);
-        Player.camera.zoom(1.0f);
+        Player.camera.rotation = 0.0f;
+        Player.camera.target = cameraTarget;
+        Player.camera.zoom = 1.0f;
     }
 
     public static void init() {
-        cameraTarget.x(0.0f).y(0.0f);
-        Player.camera.target(cameraTarget);
-        Player.camera.zoom(1.0f);
-        Player.camera.rotation(0.0f);
+        cameraTarget.x = 0.0f;
+        cameraTarget.y = 0.0f;
+        Player.camera.target = cameraTarget;
+        Player.camera.zoom = 1.0f;
+        Player.camera.rotation = 0.0f;
     }
 }

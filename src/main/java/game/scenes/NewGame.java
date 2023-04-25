@@ -4,11 +4,11 @@ import game.Window;
 import game.objects.Player;
 import game.objects.ui.Button;
 
-import com.raylib.Jaylib.*;
+import com.raylib.java.Raylib;
 
-import static com.raylib.Jaylib.BLACK;
-import static com.raylib.Jaylib.WHITE;
-import static com.raylib.Raylib.ClearBackground;
+import static com.raylib.java.core.Color.BLACK;
+import static com.raylib.java.core.Color.WHITE;
+import static game.Window.properties.rl;
 
 public class NewGame {
     private static Button oneHundredButton;
@@ -40,7 +40,7 @@ public class NewGame {
     }
 
     public static void draw() {
-        ClearBackground(WHITE);
+        rl.core.ClearBackground(WHITE);
 
         //Draw Buttons
         oneHundredButton.draw();

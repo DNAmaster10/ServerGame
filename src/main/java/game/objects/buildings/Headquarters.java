@@ -1,18 +1,19 @@
 package game.objects.buildings;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
+import com.raylib.java.core.Color;
 import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 
+import static game.Window.properties.rl;
+
 public class Headquarters extends Structure {
     public int windowXPos;
     public int windowYPos;
-    public static Raylib.Color color = new Jaylib.Color(255, 0, 255, 255);
+    public static Color color = new Color(255, 0, 255, 255);
     @Override
     public void draw() {
-        Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
+        rl.shapes.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
     }
 
     @Override

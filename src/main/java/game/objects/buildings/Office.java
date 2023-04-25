@@ -1,7 +1,5 @@
 package game.objects.buildings;
 
-import com.raylib.Raylib;
-import game.objects.Player;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 
@@ -9,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.raylib.Jaylib.BLACK;
-import static com.raylib.Jaylib.BLUE;
+import static com.raylib.java.core.Color.BLUE;
+import static game.Window.properties.rl;
 
 public class Office extends Consumer {
     public int windowXPos;
@@ -18,7 +16,7 @@ public class Office extends Consumer {
     @Override
     public void draw() {
 
-        Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, BLUE);
+        rl.shapes.DrawRectangle(windowXPos, windowYPos, 10, 10, BLUE);
         /*
         if (Player.drawIds) {
             Raylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);

@@ -1,10 +1,7 @@
 package game.objects.buildings;
 
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
-import game.Window;
+import com.raylib.java.core.Color;
 import game.objects.Player;
-import game.objects.infrastructure.Structure;
 import game.scenes.MainGame;
 import game.scenes.maingame.Ids;
 
@@ -12,18 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.raylib.Jaylib.BLACK;
+import static com.raylib.java.core.Color.BLACK;
+import static game.Window.properties.rl;
 
 public class SmallOffice extends Consumer {
     public int windowXPos;
     public int windowYPos;
-    public static Jaylib.Color color = new Jaylib.Color(17, 173, 171, 255);
+    public static Color color = new Color(17, 173, 171, 255);
 
     @Override
     public void draw() {
-        Raylib.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
+        rl.shapes.DrawRectangle(windowXPos, windowYPos, 10, 10, color);
         if (Player.drawIds) {
-            Raylib.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
+            rl.text.DrawText(String.valueOf(this.id), windowXPos, windowYPos, 3, BLACK);
         }
     }
     public SmallOffice(int gridX, int gridY) {
