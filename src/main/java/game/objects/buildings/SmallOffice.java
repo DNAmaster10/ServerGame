@@ -25,22 +25,28 @@ public class SmallOffice extends Consumer {
         }
     }
     public SmallOffice(int gridX, int gridY) {
+        //Constructor
         super.id = Ids.getNewId();
         super.gridX = gridX;
         super.gridY = gridY;
         super.emitting = false;
+        //The minimum ammount of packets which will be released at once
         super.minPackets = 3;
+        //The maximum ammount of packets which will be released at once
         super.maxPackets = 6;
 
         windowXPos = gridX * MainGame.grid.cellWindowWidth - 5;
         windowYPos = gridY * MainGame.grid.cellWindowHeight - 5;
+        //The ammount of time to wait between emiting packets within a single burst
         super.packetEmitDelay = 0.9f;
+        //The minimum ammount of time to wait before emiting another burst of packets
         super.packetFrequency = 2;
 
         List<Integer> serverIds = new ArrayList<>();
         for (Server server : MainGame.servers.values()) {
             serverIds.add(server.id);
         }
+        //The consumer's favourite server. This can include servers which are not connected to the network.
         this.favouriteServer = serverIds.get(ThreadLocalRandom.current().nextInt(0, serverIds.size()));
     }
 }
