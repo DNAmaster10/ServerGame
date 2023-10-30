@@ -11,15 +11,17 @@ import game.scenes.MainGame;
 import java.util.*;
 
 public class NodeGraph {
-    //This class is responsible for the path finding for packets
-    //and holding the information for the node graph
-
-    //The connections variable is a hash map where each key is a source node
-
+    //This class is responsible for the path finding for packets and holding the information for the node graph
+    //The class contains information about the entire player built network, but exists entirely seperately to the rest of the code
+    
+    //The connections hashmap is a hash map where each key is a source node
     public static HashMap<Integer, List<NodeConnection>> connections = new HashMap<>();
 
+    //Add a connection to the node graph
     public static void addConnection(int sourceNodeId, int destNodeId, float weight) {
         boolean containsEdge = false;
+        
+        //If the source node already exsits in the node graph
         if (connections.containsKey(sourceNodeId)) {
             for (int i = 0; i < connections.get(sourceNodeId).size(); i++) {
                 if (connections.get(sourceNodeId).get(i).getDestNode() == destNodeId) {
